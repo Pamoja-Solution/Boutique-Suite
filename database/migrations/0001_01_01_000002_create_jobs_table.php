@@ -11,6 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('fournisseurs', function (Blueprint $table) {
+            $table->id();
+            $table->string('nom');
+            $table->string('adresse')->nullable();
+            $table->string('telephone')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->string('queue')->index();
@@ -50,6 +58,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('fournisseurs');
+
         Schema::dropIfExists('jobs');
         Schema::dropIfExists('job_batches');
         Schema::dropIfExists('failed_jobs');

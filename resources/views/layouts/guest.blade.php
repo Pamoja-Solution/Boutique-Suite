@@ -12,7 +12,27 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+        <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+        <script src="https://cdn.tailwindcss.com"></script>
+        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+           @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @else
+        @endif
+        <style>
+                   
+           @font-face {
+             font-family: 'Google';
+             src: url('{{asset('ProductSans-Light.ttf')}}');
+             font-weight: 500;
+             
+         }
+         body{
+             font-family: 'Google' !important;
+         }
+         </style>
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">

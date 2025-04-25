@@ -27,13 +27,15 @@ new #[Layout('layouts.guest')] class extends Component
 <div>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-validation-errors class="mb-4" />
 
     <form wire:submit="login">
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="form.email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('form.email')" class="mt-2" />
+            <x-input-label for="matricule" :value="__('Matricule')" />
+            <x-text-input wire:model="form.matricule" id="matricule" class="block mt-1 w-full mb-2" type="text" name="matricule" required autofocus autocomplete="Matricule" />
+            <x-input-error :messages="$errors->get('form.matricule')" class="mt-2" />
+                <label for="" class="mt-3 text-gray-900 dark:text-gray-200 text-sm">Le Matricule est donné par l'administrateur</label>
         </div>
 
         <!-- Password -->
