@@ -14,7 +14,11 @@ class Logout
     {
         Auth::guard('web')->logout();
 
+        // Invalider la session et régénérer le token CSRF
         Session::invalidate();
         Session::regenerateToken();
+        
+        // Nettoyer les données de session si nécessaire
+        Session::flush();
     }
 }

@@ -11,6 +11,8 @@ use App\Livewire\GestionVente;
 use App\Livewire\VendeurMedicaments;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Livewire\Dashboard;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
 use App\Livewire\UserManager;
 use App\Livewire\MedicamentManager;
 use App\Livewire\FournisseurManager;
@@ -20,6 +22,7 @@ use App\Livewire\AchatManager;
 use App\Livewire\GestionClients;
 use App\Livewire\GestionFournisseurs;
 use App\Livewire\RayonManager;
+use App\Livewire\Auth\Login;
 
 Route::view('/', 'welcome');
 
@@ -32,8 +35,12 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout')
+        ->middleware('auth');
 
 
+        Route::get('/login', Login::class)->name('login');
 Route::middleware(['auth'
     ])->group(function () {
         Route::get('/', function () {

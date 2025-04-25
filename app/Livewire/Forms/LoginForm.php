@@ -26,7 +26,7 @@ class LoginForm extends Form
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function authenticate(): void
+    public function authenticate(): bool
     {
         $this->ensureIsNotRateLimited();
 
@@ -48,7 +48,11 @@ class LoginForm extends Form
         }
 
         RateLimiter::clear($this->throttleKey());
+        
+        return true; // Retourne true si l'authentification réussit
     }
+
+
 
     /**
      * Ensure the authentication request is not rate limited.
