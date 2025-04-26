@@ -70,6 +70,8 @@ Route::middleware(['role:vendeur,gerant,superviseur'
     Route::prefix('/users')->middleware('role:gerant')->group(function () {
         Route::get('/users', UserManager::class)->name('users.index');
         Route::get('/achats', GestionStockSimple::class)->name('achats.index');
+        Route::get('/vente', GestionVente::class)->name('vente.produits');
+
     });
     
     Route::get('/vendeur/dashboard', [UserController::class, 'dashboard'])

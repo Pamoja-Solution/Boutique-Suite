@@ -34,7 +34,7 @@
                     <x-nav-link href="{{ route('achats.index') }}" :active="request()->routeIs('achats.index')">
                         {{ __('Achats') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('vendeur.produits') }}" :active="request()->routeIs('vendeur.produits')">
+                    <x-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
                         {{ __('Ventes') }}
                     </x-nav-link>
                     
@@ -108,7 +108,7 @@
             </x-responsive-nav-link>
             @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
             
-            <x-responsive-nav-link href="{{ route('vendeur.produits') }}" :active="request()->routeIs('vendeur.produits')">
+            <x-responsive-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
                 {{ __('Ventes') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('achats.index') }}" :active="request()->routeIs('achats.index')">
