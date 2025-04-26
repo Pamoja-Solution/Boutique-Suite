@@ -18,7 +18,8 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    //'driver' => env('SESSION_DRIVER', 'database'),
+    'driver' => env('SESSION_DRIVER', 'file'),
 
     /*
     |--------------------------------------------------------------------------
@@ -61,6 +62,7 @@ return [
     */
 
     'files' => storage_path('framework/sessions'),
+    
 
     /*
     |--------------------------------------------------------------------------
