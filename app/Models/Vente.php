@@ -3,6 +3,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class Vente extends Model
 {
@@ -37,5 +39,18 @@ class Vente extends Model
         $randomString = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6)); // 6 caractères aléatoires
     
         return $date . '-' . $randomString;
+    }
+
+    public function scopeForCurrentUser(Builder $query): void
+    {
+        $query->where('user_id', Auth::user()->id);
+    }
+
+    /**
+     * Scope pour filtrer les ventes du jour
+     */
+    public function scopeToday(Builder $query): void
+    {
+        $query->whereDate('created_at', now()->toDateString());
     }
 }

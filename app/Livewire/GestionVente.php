@@ -366,10 +366,10 @@ class GestionVente extends Component
     public function getRecentVentes()
     {
         return Vente::with('client', 'detailsVentes.produit')
-            ->where('user_id', Auth::id())
-            ->whereDate('created_at', now()->toDateString()) // Filtre par date du jour
-            ->latest()
-            ->get();
+        ->forCurrentUser()  // Utilisation du scope
+        ->today()          // Utilisation du scope
+        ->latest()
+        ->get();
     }
     
     public function getProduitsExpiration()

@@ -58,7 +58,7 @@ class FuturistSalesDashboard extends Component
     public function loadChartData()
     {
         $salesData = Vente::query()
-            ->where('user_id', Auth::id()) // Ajouté
+            ->forCurrentUser()
             ->selectRaw('DATE(created_at) as date, SUM(total) as total')
             ->whereBetween('created_at', [
                 Carbon::parse($this->startDate)->startOfDay(),
@@ -91,7 +91,7 @@ class FuturistSalesDashboard extends Component
 
     public function showDetails($saleId)
     {
-        $this->selectedSale = Vente::where('user_id', Auth::id()) // Ajouté
+        $this->selectedSale = Vente::forCurrentUser() // Ajouté
             ->with(['client', 'details.produit'])
             ->find($saleId);
         $this->showDetailsModal = true;
@@ -105,7 +105,7 @@ class FuturistSalesDashboard extends Component
 
     public function printInvoice($saleId)
     {
-        $vente = Vente::where('user_id', Auth::id()) // Ajouté
+        $vente = Vente::forCurrentUser() // Ajouté
             ->with(['client', 'details.produit'])
             ->findOrFail($saleId);
 
@@ -150,7 +150,7 @@ class FuturistSalesDashboard extends Component
     public function getTotalSalesProperty()
     {
         return Vente::query()
-        ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser() // Ajouté
         ->whereBetween('created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
         ->sum('total');
     }
@@ -158,7 +158,7 @@ class FuturistSalesDashboard extends Component
     public function getSalesCountProperty()
     {
         return Vente::query()
-        ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser() // Ajouté
         ->whereBetween('created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
         ->count();
     }
@@ -167,7 +167,7 @@ class FuturistSalesDashboard extends Component
     {
         return DB::table('details_vente')
             ->join('ventes', 'details_vente.vente_id', '=', 'ventes.id')
-            ->where('ventes.user_id', Auth::id()) // Ajouté
+            ->forCurrentUser() // Ajouté
             ->whereBetween('ventes.created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
             ->sum('quantite');
     }
@@ -181,12 +181,12 @@ class FuturistSalesDashboard extends Component
     public function getSalesTrendProperty()
     {
         $currentPeriod = Vente::query()
-            ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser()// Ajouté
             ->whereBetween('created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
             ->sum('total');
             
         $previousPeriod = Vente::query()
-            ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser() // Ajouté
             ->whereBetween('created_at', [
                 Carbon::parse($this->startDate)->subDays(Carbon::parse($this->startDate)->diffInDays($this->endDate))->startOfDay(),
                 Carbon::parse($this->startDate)->subDay()->endOfDay()
@@ -199,12 +199,12 @@ class FuturistSalesDashboard extends Component
     public function getSalesCountTrendProperty()
     {
         $currentPeriod = Vente::query()
-            ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser() // Ajouté
             ->whereBetween('created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
             ->count();
             
         $previousPeriod = Vente::query()
-            ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser() // Ajouté
             ->whereBetween('created_at', [
                 Carbon::parse($this->startDate)->subDays(Carbon::parse($this->startDate)->diffInDays($this->endDate))->startOfDay(),
                 Carbon::parse($this->startDate)->subDay()->endOfDay()
@@ -239,7 +239,7 @@ class FuturistSalesDashboard extends Component
         $currentAvg = $this->averageCart;
         
         $previousPeriodSales = Vente::query()
-            ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser() // Ajouté
             ->whereBetween('created_at', [
                 Carbon::parse($this->startDate)->subDays(Carbon::parse($this->startDate)->diffInDays($this->endDate))->startOfDay(),
                 Carbon::parse($this->startDate)->subDay()->endOfDay()
@@ -275,7 +275,7 @@ class FuturistSalesDashboard extends Component
     public function getSalesProperty()
     {
         return Vente::query()
-            ->where('user_id', Auth::id()) // Ajouté
+        ->forCurrentUser() // Ajouté
             ->with(['client'])
             ->when($this->startDate, function ($query) {
                 $query->where('created_at', '>=', $this->startDate);
