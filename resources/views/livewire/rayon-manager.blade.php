@@ -205,7 +205,7 @@
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                     <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
                         @if($action === 'createRayon' || $action === 'editRayon')
-                            <form wire:submit.prevent="{{ $action === 'createRayon' ? 'storeRayon' : 'updateRayon' }}">
+                            <form wire:submit.prevent="{{ $action === 'createRayon' ? 'storeRayon' : 'storeRayon' }}">
                                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-800">
                                     <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 mb-4">
                                         {{ $action === 'createRayon' ? 'Créer un nouveau rayon' : 'Modifier le rayon' }}
@@ -263,7 +263,7 @@
                                 </div>
                             </form>
                         @elseif($action === 'createSousRayon' || $action === 'editSousRayon')
-                            <form wire:submit.prevent="{{ $action === 'createSousRayon' ? 'storeSousRayon' : 'updateSousRayon' }}">
+                            <form wire:submit.prevent="{{ $action === 'createSousRayon' ? 'storeSousRayon' : 'storeSousRayon' }}">
                                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-800">
                                     <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 mb-4">
                                         {{ $action === 'createSousRayon' ? 'Créer un nouveau sous-rayon' : 'Modifier le sous-rayon' }}

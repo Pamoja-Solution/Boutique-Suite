@@ -31,8 +31,9 @@ new #[Layout('layouts.guest')] class extends Component
         event(new Registered($user = User::create($validated)));
 
         Auth::login($user);
+        $this->redirectIntended(default: route('dashboard'), navigate: request()->header('X-Livewire') === 'true');
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+
     }
 }; ?>
 

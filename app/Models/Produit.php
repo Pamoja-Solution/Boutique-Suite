@@ -19,7 +19,10 @@ class Produit extends Model
         'fournisseur_id',
         'unite_mesure',
         'taxable',
-        'rupture_stock'
+        'rupture_stock','date_expiration'
+    ];
+    protected $casts = [
+        'date_expiration' => 'date', // ou 'datetime' selon votre besoin
     ];
         // Relation avec le fournisseur
     public function fournisseur(): BelongsTo

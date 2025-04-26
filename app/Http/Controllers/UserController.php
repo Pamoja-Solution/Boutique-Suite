@@ -12,7 +12,6 @@ class UserController extends Controller
         return view('vendeur.dashboard');
     }
     public function dashboardgerant(){
-        dd('deeeeeeeeeeeeeeeeee');
         return view('vendeur.dashboard');
     }
 

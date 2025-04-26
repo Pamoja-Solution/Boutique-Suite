@@ -1,29 +1,42 @@
 <?php
-
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
-
 new #[Layout('layouts.guest')] class extends Component
 {
     public LoginForm $form;
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function login(): void
     {
         $this->validate();
 
         $this->form->authenticate();
 
+        // Vérification du status de l'utilisateur
+        if (Auth::user()->status == 0) {
+            Auth::logout();
+
+            // Facultatif : nettoyage session si nécessaire
+            Session::invalidate();
+            Session::regenerateToken();
+
+            // Redirection avec message d'erreur
+            $this->redirect(route('login'), navigate: request()->header('X-Livewire') === 'true');
+            session()->flash('error', 'Votre compte est désactivé.');
+            return;
+        }
+
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard'), navigate: request()->header('X-Livewire') === 'true');    }
-}; ?>
+        $this->redirectIntended(default: route('dashboard'), navigate: request()->header('X-Livewire') === 'true');
+    }
+};
+ ?>
 
 <div>
+    
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
     <x-validation-errors class="mb-4" />

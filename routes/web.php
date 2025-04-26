@@ -12,7 +12,7 @@ use App\Livewire\VendeurMedicaments;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Livewire\Dashboard;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-
+use App\Http\Controllers\MonnaieController;
 use App\Livewire\UserManager;
 use App\Livewire\MedicamentManager;
 use App\Livewire\FournisseurManager;
@@ -23,6 +23,10 @@ use App\Livewire\GestionClients;
 use App\Livewire\GestionFournisseurs;
 use App\Livewire\RayonManager;
 use App\Livewire\Auth\Login;
+use App\Livewire\GestionStockSimple;
+use App\Livewire\GestionTauxChange;
+use App\Livewire\LesVentes;
+use App\Livewire\MonnaieManager;
 
 Route::view('/', 'welcome');
 
@@ -40,8 +44,7 @@ Route::view('profile', 'profile')
         ->middleware('auth');
 
 
-        Route::get('/login', Login::class)->name('login');
-Route::middleware(['auth'
+Route::middleware(['role:vendeur,gerant,superviseur'
     ])->group(function () {
         Route::get('/', function () {
             return redirect()->route('dashboard');
@@ -62,11 +65,11 @@ Route::middleware(['auth'
         })->name('produits.index');
         Route::get('/fournisseurs', GestionFournisseurs::class)->name('fournisseurs.index');
         Route::get('/clients',  GestionClients::class)->name('clients.index');
-        Route::get('/ventes', VenteManager::class)->name('ventes.index');
+       // Route::get('/ventes', VenteManager::class)->name('ventes.index');
     });
     Route::prefix('/users')->middleware('role:gerant')->group(function () {
         Route::get('/users', UserManager::class)->name('users.index');
-        Route::get('/achats', AchatManager::class)->name('achats.index');
+        Route::get('/achats', GestionStockSimple::class)->name('achats.index');
     });
     
     Route::get('/vendeur/dashboard', [UserController::class, 'dashboard'])
@@ -84,11 +87,17 @@ Route::middleware(['auth'
     
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     
-    Route::middleware(['role:vendeur', 'verified'])->group(function () {
+    Route::middleware(['role:vendeur,gerant', 'verified'])->group(function () {
         // ... autres routes
         
         Route::get('/vendeur/produits', GestionVente::class)->name('vendeur.produits');
         Route::get('/vendeur', [HomeController::class, 'Sale'])->name('vendeur.stat');
+        Route::get('/statistiques', LesVentes::class)->name('stats');
+    });
+
+    Route::group(['prefix' => 'monnaie', 'middleware' => ['auth','role:gerant,superviseur','verified']], function () {
+        Route::get("/", MonnaieManager::class)->name("monnaie.index");
+        Route::get("/taux", GestionTauxChange::class)->name("taux");
     });
     Route::get('/ventes/{vente}/print-invoice', function(App\Models\Vente $vente) {
         $vente->load(['client', 'details.produit']);

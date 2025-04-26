@@ -39,6 +39,12 @@ class RayonManager extends Component
         'sous_rayon_rayon_id' => 'required|exists:rayons,id',
     ];
 
+    public function updateRayon()
+{
+    // Cette méthode ferait la même chose que storeRayon
+    return $this->storeRayon();
+}
+
         public function render()
     {
         return view('livewire.rayon-manager', [

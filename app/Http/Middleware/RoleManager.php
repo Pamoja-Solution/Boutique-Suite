@@ -14,34 +14,34 @@ class RoleManager
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role)
-{
-    if (!Auth::check()) {
-        return redirect()->route('login');
-    }
-
-    $user = Auth::user();
-    $authUserRole = $user->role;
-
-    // Vérification du statut du compte
-    if ($user->status == 0) {
-        Auth::logout();
-        return redirect()->route('login')->with('error', 'Votre compte est désactivé.');
-    }
-
-    // Vérification du rôle
-    if ($authUserRole === $role) {
-        return $next($request);
-    }
-
-    // Redirection basée sur le rôle de l'utilisateur
-    return redirect()->to(
-        match ($authUserRole) {
-            'gerant'      => route('gerant.dashboard'),
-            'vendeur'     => route('vendeur.dashboard'),
-            'superviseur' => route('superviseur.dashboard'),
-            default       => '/'
+        public function handle(Request $request, Closure $next, ...$roles)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
-    )->with('error', 'Accès non autorisé.');
-}
+
+        $user = Auth::user();
+        $authUserRole = $user->role;
+
+        // Vérification du statut du compte
+        if ($user->status == 0) {
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'Votre compte est désactivé.');
+        }
+
+        // Vérification des rôles autorisés
+        if (in_array($authUserRole, $roles)) {
+            return $next($request);
+        }
+
+        // Redirection basée sur le rôle de l'utilisateur
+        return redirect()->to(
+            match ($authUserRole) {
+                'gerant'      => route('gerant.dashboard'),
+                'vendeur'     => route('vendeur.dashboard'),
+                'superviseur' => route('superviseur.dashboard'),
+                default       => '/'
+            }
+        )->with('error', 'Accès non autorisé.');
+    }
 }
