@@ -23,7 +23,6 @@ class UserManager extends Component
     protected $rules = [
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
-        'matricule' => '|matricule|unique:users,matricule',
         'password' => 'required|min:8',
         'role' => 'required|in:vendeur,gerant,superviseur',
         'status' => 'required|boolean',
