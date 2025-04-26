@@ -28,8 +28,17 @@ use App\Livewire\GestionTauxChange;
 use App\Livewire\LesVentes;
 use App\Livewire\MonnaieManager;
 
+use Illuminate\Support\Facades\Session;
 Route::view('/', 'welcome');
 
+Route::get('/session-test', function () {
+    Session::put('test', 'Hello Session');
+    return 'Session written';
+});
+
+Route::get('/session-check', function () {
+    return Session::get('test', 'Session vide');
+});
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
