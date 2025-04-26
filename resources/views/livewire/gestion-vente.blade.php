@@ -1,5 +1,4 @@
 <div class="">
-    @include('gerant.nav')
     <div class="py-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- En-tête -->
