@@ -11,9 +11,10 @@ class TauxChange extends Model
     protected $table='taux_change';
 
     protected $fillable = [
-        'monnaie_id',
+        'monnaie_source_id',
         'taux',
-        'date_effet'
+        'date_effet',
+        'monnaie_cible_id'
     ];
 
     protected $casts = [

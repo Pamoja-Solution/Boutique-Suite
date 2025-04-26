@@ -36,7 +36,10 @@
                                 <dl>
                                     <dt class="text-sm font-medium text-gray-500 truncate">Total Produits</dt>
                                     <dd class="flex items-baseline">
-                                        <div class="text-2xl font-semibold text-gray-900">{{ $totalProduits }}</div>
+                                        <div class="text-2xl font-semibold text-gray-900">{{ $totalProduits }}
+                                            @livewire('taux-change-scroller')
+
+                                        </div>
                                     </dd>
                                 </dl>
                             </div>

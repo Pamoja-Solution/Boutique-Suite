@@ -79,38 +79,38 @@ class TauxChangeManager extends Component
     }
 
     public function store()
-    {
-        $this->validate([
-            'monnaie_source_id' => 'required|exists:monnaies,id|different:monnaie_cible_id',
-            'monnaie_cible_id' => 'required|exists:monnaies,id|different:monnaie_source_id',
-            'taux' => 'required|numeric|min:0.000001',
-            'date_effet' => [
-                'required',
-                'date',
-                Rule::unique('taux_change', 'date_effet')
-                    ->where('monnaie_source_id', $this->monnaie_source_id)
-                    ->where('monnaie_cible_id', $this->monnaie_cible_id)
-                    ->ignore($this->taux_id)
-            ],
-        ]);
+{
+    $this->validate([
+        'monnaie_source_id' => 'required|exists:monnaies,id|different:monnaie_cible_id',
+        'monnaie_cible_id' => 'required|exists:monnaies,id|different:monnaie_source_id',
+        'taux' => 'required|numeric|min:0.000001',
+        'date_effet' => [
+            'required',
+            'date',
+            Rule::unique('taux_change', 'date_effet')
+                ->where('monnaie_source_id', $this->monnaie_source_id)
+                ->where('monnaie_cible_id', $this->monnaie_cible_id)
+                ->ignore($this->taux_id)
+        ],
+    ]);
 
-        TauxChange::updateOrCreate(
-            ['id' => $this->taux_id],
-            [
-                'monnaie_source_id' => $this->monnaie_source_id,
-                'monnaie_cible_id' => $this->monnaie_cible_id,
-                'taux' => $this->taux,
-                'date_effet' => $this->date_effet,
-            ]
-        );
+    TauxChange::updateOrCreate(
+        ['id' => $this->taux_id],
+        [
+            'monnaie_source_id' => $this->monnaie_source_id,
+            'monnaie_cible_id' => $this->monnaie_cible_id,
+            'taux' => $this->taux,
+            'date_effet' => $this->date_effet,
+        ]
+    );
 
-        session()->flash('message', $this->taux_id 
-            ? 'Taux de change mis à jour avec succès.' 
-            : 'Taux de change créé avec succès.');
+    session()->flash('message', $this->taux_id 
+        ? 'Taux de change mis à jour avec succès.' 
+        : 'Taux de change créé avec succès.');
 
-        $this->closeModal();
-        $this->resetInputFields();
-    }
+    $this->closeModal();
+    $this->resetInputFields();
+}
 
     public function edit($id)
     {

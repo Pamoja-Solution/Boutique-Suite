@@ -1,4 +1,7 @@
 <div class="">
+    @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
+    @include('gerant.nav')
+    @endif
     <div class="py-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- En-tête -->
@@ -21,7 +24,7 @@
                 </a>
                 @endif
                 <!-- Dashboard metrics -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
                     <div class="bg-blue-50 dark:bg-blue-900 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
                         <h3 class="font-semibold text-blue-800 dark:text-blue-200">Ventes récentes</h3>
                         <p class="text-2xl font-bold text-blue-600 dark:text-blue-300">{{ count($this->getRecentVentes()) }}</p>
@@ -36,6 +39,11 @@
                         <h3 class="font-semibold text-red-800 dark:text-red-200">Stock faible</h3>
                         <p class="text-2xl font-bold text-red-600 dark:text-red-300">{{ count($this->getProduitsLowStock()) }}</p>
                     </div>
+                    <div class="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 border border-gray-700 dark:border-gray-200">
+                        @livewire('taux-change-scroller')
+                    </div>
+
+
                 </div>
             </div>
             
