@@ -1,55 +1,49 @@
 <?php
+
 namespace App\Livewire;
 
 use App\Models\Monnaie;
 use App\Models\TauxChange;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.app')]
 class TauxChangeManager extends Component
 {
     use WithPagination;
 
-    public $monnaie_id, $taux, $date_effet;
-    public $tauxChangeId;
-    public $search = '';
-    public $isModalOpen = false;
-
-    protected $rules = [
-        'monnaie_id' => 'required|exists:monnaies,id',
-        'taux' => 'required|numeric|min:0.000001',
-        'date_effet' => 'required|date|unique:taux_change,date_effet,NULL,id,monnaie_id,'.$this->monnaie_id
-    ];
-    public function resetInputFields()
-    {
-        $this->taux = '';
-        $this->date_effet = '';
-    }
-    public function openModal()
-    {
-        $this->isModalOpen = true;
-    }
-
-    public function closeModal()
-    {
-        $this->isModalOpen = false;
-    }
-
+    public $taux_id;
+    public $monnaie_source_id;
+    public $monnaie_cible_id;
+    public $taux;
+    public $date_effet;
+    public $isOpen = false;
+    public $searchTerm = '';
+    public $confirmingDelete = false;
+    public $deleteId = null;
 
     public function render()
     {
-        $tauxChanges = TauxChange::with('monnaie')
-            ->when($this->search, function($query) {
-                $query->whereHas('monnaie', function($q) {
-                    $q->where('libelle', 'like', '%'.$this->search.'%')
-                      ->orWhere('code', 'like', '%'.$this->search.'%');
+        $searchTerm = '%' . $this->searchTerm . '%';
+        
+        $tauxChanges = TauxChange::with(['monnaieSource', 'monnaieCible'])
+            ->where(function($query) use ($searchTerm) {
+                $query->whereHas('monnaieSource', function($q) use ($searchTerm) {
+                    $q->where('libelle', 'like', $searchTerm)
+                      ->orWhere('code', 'like', $searchTerm);
+                })
+                ->orWhereHas('monnaieCible', function($q) use ($searchTerm) {
+                    $q->where('libelle', 'like', $searchTerm)
+                      ->orWhere('code', 'like', $searchTerm);
                 });
             })
             ->orderBy('date_effet', 'desc')
             ->paginate(10);
-
-        $monnaies = Monnaie::all();
-
+            
+        $monnaies = Monnaie::orderBy('libelle')->get();
+            
         return view('livewire.taux-change-manager', [
             'tauxChanges' => $tauxChanges,
             'monnaies' => $monnaies
@@ -59,24 +53,60 @@ class TauxChangeManager extends Component
     public function create()
     {
         $this->resetInputFields();
-        $this->date_effet = now()->format('Y-m-d');
+        $this->date_effet = date('Y-m-d');
         $this->openModal();
     }
 
-    // ... (méthodes openModal, closeModal, resetInputFields similaires à MonnaiesManager)
+    public function openModal()
+    {
+        $this->isOpen = true;
+    }
+
+    public function closeModal()
+    {
+        $this->isOpen = false;
+        $this->resetValidation();
+    }
+
+    private function resetInputFields()
+    {
+        $this->taux_id = null;
+        $this->monnaie_source_id = '';
+        $this->monnaie_cible_id = '';
+        $this->taux = '';
+        $this->date_effet = '';
+        $this->resetValidation();
+    }
 
     public function store()
     {
-        $this->validate();
-
-        TauxChange::updateOrCreate(['id' => $this->tauxChangeId], [
-            'monnaie_id' => $this->monnaie_id,
-            'taux' => $this->taux,
-            'date_effet' => $this->date_effet
+        $this->validate([
+            'monnaie_source_id' => 'required|exists:monnaies,id|different:monnaie_cible_id',
+            'monnaie_cible_id' => 'required|exists:monnaies,id|different:monnaie_source_id',
+            'taux' => 'required|numeric|min:0.000001',
+            'date_effet' => [
+                'required',
+                'date',
+                Rule::unique('taux_change', 'date_effet')
+                    ->where('monnaie_source_id', $this->monnaie_source_id)
+                    ->where('monnaie_cible_id', $this->monnaie_cible_id)
+                    ->ignore($this->taux_id)
+            ],
         ]);
 
-        session()->flash('message', 
-            $this->tauxChangeId ? 'Taux mis à jour.' : 'Taux créé.');
+        TauxChange::updateOrCreate(
+            ['id' => $this->taux_id],
+            [
+                'monnaie_source_id' => $this->monnaie_source_id,
+                'monnaie_cible_id' => $this->monnaie_cible_id,
+                'taux' => $this->taux,
+                'date_effet' => $this->date_effet,
+            ]
+        );
+
+        session()->flash('message', $this->taux_id 
+            ? 'Taux de change mis à jour avec succès.' 
+            : 'Taux de change créé avec succès.');
 
         $this->closeModal();
         $this->resetInputFields();
@@ -85,17 +115,35 @@ class TauxChangeManager extends Component
     public function edit($id)
     {
         $tauxChange = TauxChange::findOrFail($id);
-        $this->tauxChangeId = $id;
-        $this->monnaie_id = $tauxChange->monnaie_id;
+        $this->taux_id = $id;
+        $this->monnaie_source_id = $tauxChange->monnaie_source_id;
+        $this->monnaie_cible_id = $tauxChange->monnaie_cible_id;
         $this->taux = $tauxChange->taux;
         $this->date_effet = $tauxChange->date_effet->format('Y-m-d');
         
         $this->openModal();
     }
 
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        TauxChange::find($id)->delete();
-        session()->flash('message', 'Taux supprimé.');
+        $this->confirmingDelete = true;
+        $this->deleteId = $id;
+    }
+
+    public function cancelDelete()
+    {
+        $this->confirmingDelete = false;
+        $this->deleteId = null;
+    }
+
+    public function delete()
+    {
+        if ($this->deleteId) {
+            TauxChange::findOrFail($this->deleteId)->delete();
+            session()->flash('message', 'Taux de change supprimé avec succès.');
+        }
+        
+        $this->confirmingDelete = false;
+        $this->deleteId = null;
     }
 }

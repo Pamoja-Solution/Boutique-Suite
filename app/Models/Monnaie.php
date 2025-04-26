@@ -25,8 +25,11 @@ class Monnaie extends Model
         'statut' => 'boolean'
     ];
 
-    public function tauxChanges(): HasMany
+    
+
+    public function tauxChanges()
     {
         return $this->hasMany(TauxChange::class);
     }
+    
 }

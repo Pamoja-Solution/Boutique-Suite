@@ -1,35 +1,40 @@
 <?php
+
 namespace App\Livewire;
 
 use App\Models\Monnaie;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.app')]
 class MonnaieManager extends Component
 {
     use WithPagination;
 
-    public $libelle, $symbole, $code, $taux_change = 1.0, $statut = 0;
-    public $monnaieId;
-    public $search = '';
-    public $isModalOpen = false;
-
-    protected $rules = [
-        'libelle' => 'required|string|max:255|unique:monnaies,libelle',
-        'symbole' => 'required|string|max:10|unique:monnaies,symbole',
-        'code' => 'required|string|size:3|unique:monnaies,code',
-        'taux_change' => 'required|numeric|min:0.000001',
-        'statut' => 'boolean'
-    ];
+    public $monnaie_id;
+    public $libelle;
+    public $symbole;
+    public $code;
+    public $statut = '0';
+    public $isOpen = false;
+    public $searchTerm = '';
+    public $confirmingDelete = false;
+    public $deleteId = null;
 
     public function render()
     {
-        $monnaies = Monnaie::when($this->search, function($query) {
-            $query->where('libelle', 'like', '%'.$this->search.'%')
-                  ->orWhere('code', 'like', '%'.$this->search.'%');
-        })->paginate(10);
-
-        return view('livewire.monnaie-manager', ['monnaies' => $monnaies]);
+        $searchTerm = '%' . $this->searchTerm . '%';
+        
+        $monnaies = Monnaie::where('libelle', 'like', $searchTerm)
+            ->orWhere('code', 'like', $searchTerm)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+            
+        return view('livewire.monnaie-manager', [
+            'monnaies' => $monnaies
+        ]);
     }
 
     public function create()
@@ -40,38 +45,48 @@ class MonnaieManager extends Component
 
     public function openModal()
     {
-        $this->isModalOpen = true;
+        $this->isOpen = true;
     }
 
     public function closeModal()
     {
-        $this->isModalOpen = false;
+        $this->isOpen = false;
+        $this->resetValidation();
     }
 
-    public function resetInputFields()
+    private function resetInputFields()
     {
+        $this->monnaie_id = null;
         $this->libelle = '';
         $this->symbole = '';
         $this->code = '';
-        $this->taux_change = 1.0;
-        $this->statut = 0;
-        $this->monnaieId = null;
+        $this->statut = '0';
+        $this->resetValidation();
     }
 
     public function store()
     {
-        $this->validate();
-
-        Monnaie::updateOrCreate(['id' => $this->monnaieId], [
-            'libelle' => $this->libelle,
-            'symbole' => $this->symbole,
-            'code' => strtoupper($this->code),
-            'taux_change' => $this->taux_change,
-            'statut' => $this->statut
+        $this->validate([
+            'libelle' => ['required', Rule::unique('monnaies', 'libelle')->ignore($this->monnaie_id)],
+            'symbole' => ['required', Rule::unique('monnaies', 'symbole')->ignore($this->monnaie_id)],
+            'code' => ['required', 'max:10', Rule::unique('monnaies', 'code')->ignore($this->monnaie_id)],
+            'statut' => 'required|in:0,1',
         ]);
 
-        session()->flash('message', 
-            $this->monnaieId ? 'Monnaie mise à jour.' : 'Monnaie créée.');
+        Monnaie::updateOrCreate(
+            ['id' => $this->monnaie_id],
+            [
+                'libelle' => $this->libelle,
+                'symbole' => $this->symbole,
+                'code' => strtoupper($this->code),
+                'taux_change' => 0,
+                'statut' => $this->statut,
+            ]
+        );
+
+        session()->flash('message', $this->monnaie_id 
+            ? 'Monnaie mise à jour avec succès.' 
+            : 'Monnaie créée avec succès.');
 
         $this->closeModal();
         $this->resetInputFields();
@@ -80,26 +95,35 @@ class MonnaieManager extends Component
     public function edit($id)
     {
         $monnaie = Monnaie::findOrFail($id);
-        $this->monnaieId = $id;
+        $this->monnaie_id = $id;
         $this->libelle = $monnaie->libelle;
         $this->symbole = $monnaie->symbole;
         $this->code = $monnaie->code;
-        $this->taux_change = $monnaie->taux_change;
         $this->statut = $monnaie->statut;
         
         $this->openModal();
     }
 
-    public function delete($id)
+    public function confirmDelete($id)
     {
-        Monnaie::find($id)->delete();
-        session()->flash('message', 'Monnaie supprimée.');
+        $this->confirmingDelete = true;
+        $this->deleteId = $id;
     }
 
-    public function toggleStatus($id)
+    public function cancelDelete()
     {
-        $monnaie = Monnaie::find($id);
-        $monnaie->statut = !$monnaie->statut;
-        $monnaie->save();
+        $this->confirmingDelete = false;
+        $this->deleteId = null;
+    }
+
+    public function delete()
+    {
+        if ($this->deleteId) {
+            Monnaie::findOrFail($this->deleteId)->delete();
+            session()->flash('message', 'Monnaie supprimée avec succès.');
+        }
+        
+        $this->confirmingDelete = false;
+        $this->deleteId = null;
     }
 }

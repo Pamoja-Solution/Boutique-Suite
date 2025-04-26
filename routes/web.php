@@ -27,6 +27,7 @@ use App\Livewire\GestionStockSimple;
 use App\Livewire\GestionTauxChange;
 use App\Livewire\LesVentes;
 use App\Livewire\MonnaieManager;
+use App\Livewire\TauxChangeManager;
 
 Route::view('/', 'welcome');
 
@@ -99,7 +100,7 @@ Route::middleware(['role:vendeur,gerant,superviseur'
 
     Route::group(['prefix' => 'monnaie', 'middleware' => ['auth','role:gerant,superviseur','verified']], function () {
         Route::get("/", MonnaieManager::class)->name("monnaie.index");
-        Route::get("/taux", GestionTauxChange::class)->name("taux");
+        Route::get("/taux", TauxChangeManager::class)->name("taux");
     });
     Route::get('/ventes/{vente}/print-invoice', function(App\Models\Vente $vente) {
         $vente->load(['client', 'details.produit']);

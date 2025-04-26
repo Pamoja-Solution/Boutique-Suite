@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TauxChange extends Model
 {
     //
-    protected $table=['taux_changes'];
+    protected $table='taux_change';
 
     protected $fillable = [
         'monnaie_id',
@@ -17,12 +17,23 @@ class TauxChange extends Model
     ];
 
     protected $casts = [
-        'taux' => 'decimal:6',
-        'date_effet' => 'date'
+        'date_effet' => 'date',
+        'taux' => 'float',
     ];
+    
 
     public function monnaie(): BelongsTo
     {
         return $this->belongsTo(Monnaie::class);
+    }
+    
+    public function monnaieSource()
+    {
+        return $this->belongsTo(Monnaie::class, 'monnaie_source_id');
+    }
+
+    public function monnaieCible()
+    {
+        return $this->belongsTo(Monnaie::class, 'monnaie_cible_id');
     }
 }

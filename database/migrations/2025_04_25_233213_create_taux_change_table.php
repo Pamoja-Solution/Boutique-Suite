@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('taux_change', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('monnaie_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('monnaie_source_id')->constrained('monnaies')->cascadeOnDelete();
+            $table->foreignId('monnaie_cible_id')->constrained('monnaies')->cascadeOnDelete();
             $table->decimal('taux', 10, 6);
             $table->date('date_effet');
             $table->timestamps();
             
-            $table->unique(['monnaie_id', 'date_effet']);
+            $table->unique(['monnaie_source_id', 'monnaie_cible_id', 'date_effet']);
         });
     }
 
