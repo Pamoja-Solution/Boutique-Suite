@@ -23,6 +23,7 @@ use App\Livewire\GestionClients;
 use App\Livewire\GestionFournisseurs;
 use App\Livewire\RayonManager;
 use App\Livewire\Auth\Login;
+use App\Livewire\ExpenseManager;
 use App\Livewire\GestionStockSimple;
 use App\Livewire\GestionTauxChange;
 use App\Livewire\LesVentes;
@@ -97,7 +98,11 @@ Route::middleware(['role:vendeur,gerant,superviseur'
         Route::get('/vendeur', [HomeController::class, 'Sale'])->name('vendeur.stat');
         Route::get('/statistiques', LesVentes::class)->name('stats');
     });
-
+    Route::get("/depenses", ExpenseManager::class)->middleware(['role:vendeur,gerant,superviseur'])->name("depenses");
+// Dans routes/web.php
+Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
+    ->middleware(['auth','role:gerant,superviseur',])
+    ->name('user.statistics');
     Route::group(['prefix' => 'monnaie', 'middleware' => ['auth','role:gerant,superviseur','verified']], function () {
         Route::get("/", MonnaieManager::class)->name("monnaie.index");
         Route::get("/taux", TauxChangeManager::class)->name("taux");

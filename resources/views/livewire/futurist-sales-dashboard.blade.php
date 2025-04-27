@@ -132,7 +132,7 @@
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-medium text-gray-100 flex items-center">
-                            <i class="fas fa-list-ul mr-2 text-blue-400"></i> Détails des ventes
+                            <i class="fas fa-list-ul mr-2 text-blue-400"></i> 
                         </h3>
                         <div class="flex items-center space-x-2">
                             <input type="text" wire:model.live="search" placeholder="Rechercher..." class="bg-gray-800 border-gray-600 rounded rounded-ld">
