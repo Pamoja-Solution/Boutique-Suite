@@ -6,11 +6,11 @@ use App\Models\Produit;
 use App\Models\Vente;
 use App\Models\Achat;
 use App\Models\Client;
-use App\Models\User;
 use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
+
 #[Layout('layouts.app')]
 class Dashboard extends Component
 {
@@ -18,34 +18,31 @@ class Dashboard extends Component
     
     public function render()
     {
-        // Statistiques générales
-        $totalProduits = Produit::count();
-        $totalClients = Client::count();
-        $totalVentes = Vente::count();
-        $totalAchats = Achat::count();
+        // Dates de filtrage
+        $dateRange = $this->getDateRange();
         
-        // Médicaments à faible stock (moins de 10 unités)
+        // Statistiques générales
+        $totalProduits = Produit::count(); // Non affecté par la période
+        $totalClients = Client::count();   // Non affecté par la période
+        
+        // Statistiques filtrées par période
+        $totalVentes = Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->count();
+        $totalAchats = Achat::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->count();
+        
+        // Médicaments à faible stock (moins de 10 unités) - Non affecté par la période
         $lowStockProduits = Produit::where('stock', '<', 10)->get();
         
-        // Médicaments qui expirent bientôt (dans les 30 jours)
+        // Médicaments qui expirent bientôt (dans les 30 jours) - Non affecté par la période
         $expiringProduits = Produit::where('date_expiration', '<=', Carbon::now()->addDays(30))->get();
         
         // Ventes par période
-        $salesData = $this->getSalesData();
+        $salesData = $this->getSalesData($dateRange);
         
-        // Top 5 des médicaments les plus vendus
-        $topSellingProduits = DB::table('details_vente')
-            ->join('produits', 'details_vente.produit_id', '=', 'produits.id')
-            ->select('produits.nom', DB::raw('SUM(details_vente.quantite) as total_sold'))
-            ->groupBy('produits.nom')
-            ->orderBy('total_sold', 'desc')
-            ->limit(5)
-            ->get();
+        // Top 5 des médicaments les plus vendus (filtré par période)
+        $topSellingProduits = $this->getTopSellingProduits($dateRange);
         
-        // Statistiques financières
-        $totalRevenue = Vente::sum('total');
-        $totalCost = Achat::sum('total');
-        $profit = $totalRevenue - $totalCost;
+        // Statistiques financières (filtrées par période)
+        $financialStats = $this->getFinancialStats($dateRange);
         
         return view('livewire.dashboard', [
             'totalProduits' => $totalProduits,
@@ -56,9 +53,10 @@ class Dashboard extends Component
             'expiringProduits' => $expiringProduits,
             'salesData' => $salesData,
             'topSellingProduits' => $topSellingProduits,
-            'totalRevenue' => $totalRevenue,
-            'totalCost' => $totalCost,
-            'profit' => $profit
+            'totalRevenue' => $financialStats['totalRevenue'],
+            'totalCost' => $financialStats['totalCost'],
+            'profit' => $financialStats['profit'],
+            'period' => $this->period
         ]);
     }
     
@@ -67,41 +65,85 @@ class Dashboard extends Component
         $this->period = $period;
     }
     
-    private function getSalesData()
+    private function getDateRange()
     {
+        $now = Carbon::now();
+        
         switch ($this->period) {
             case 'week':
-                $startDate = Carbon::now()->subWeek();
-                $groupBy = 'day';
-                $dateFormat = '%Y-%m-%d';
-                break;
+                return [
+                    'start' => $now->copy()->startOfWeek(),
+                    'end' => $now->copy()->endOfWeek()
+                ];
             case 'month':
-                $startDate = Carbon::now()->subMonth();
-                $groupBy = 'day';
-                $dateFormat = '%Y-%m-%d';
-                break;
+                return [
+                    'start' => $now->copy()->startOfMonth(),
+                    'end' => $now->copy()->endOfMonth()
+                ];
             case 'year':
-                $startDate = Carbon::now()->subYear();
-                $groupBy = 'month';
-                $dateFormat = '%Y-%m';
-                break;
+                return [
+                    'start' => $now->copy()->startOfYear(),
+                    'end' => $now->copy()->endOfYear()
+                ];
             default:
-                $startDate = Carbon::now()->subMonth();
-                $groupBy = 'day';
-                $dateFormat = '%Y-%m-%d';
+                return [
+                    'start' => $now->copy()->startOfMonth(),
+                    'end' => $now->copy()->endOfMonth()
+                ];
         }
-        
-        /*$salesData = Vente::where('created_at', '>=', $startDate)
-        ->select(DB::raw("strftime('%Y-%m-%d', created_at) as date"), DB::raw('SUM(total) as amount'))
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();*/
-        $salesData = Vente::where('created_at', '>=', $startDate)
-        ->selectRaw("DATE(created_at) as date, SUM(total) as amount")
-        ->groupByRaw("DATE(created_at)")
-        ->orderBy('date')
-        ->get();
+    }
+    
+    private function getSalesData($dateRange)
+    {
+        if (config('database.default') === 'sqlite') {
+            // Version pour SQLite
+            if ($this->period === 'year') {
+                return Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                    ->selectRaw("strftime('%Y-%m', created_at) as date, SUM(total) as amount")
+                    ->groupBy('date')
+                    ->orderBy('date')
+                    ->get();
+            } else {
+                return Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                    ->selectRaw("date(created_at) as date, SUM(total) as amount")
+                    ->groupBy('date')
+                    ->orderBy('date')
+                    ->get();
+            }
+        } else {
+            // Version pour MySQL/MariaDB
+            $groupByFormat = $this->period === 'year' ? '%Y-%m' : '%Y-%m-%d';
             
-        return $salesData;
+            return Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                ->selectRaw("DATE_FORMAT(created_at, '{$groupByFormat}') as date, SUM(total) as amount")
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        }
+    }
+    
+    private function getTopSellingProduits($dateRange)
+    {
+        return DB::table('details_vente')
+            ->join('produits', 'details_vente.produit_id', '=', 'produits.id')
+            ->join('ventes', 'details_vente.vente_id', '=', 'ventes.id')
+            ->whereBetween('ventes.created_at', [$dateRange['start'], $dateRange['end']])
+            ->select('produits.nom', DB::raw('SUM(details_vente.quantite) as total_sold'))
+            ->groupBy('produits.nom')
+            ->orderBy('total_sold', 'desc')
+            ->limit(5)
+            ->get();
+    }
+    
+    private function getFinancialStats($dateRange)
+    {
+        $totalRevenue = Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->sum('total');
+        $totalCost = Achat::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->sum('total');
+        
+        return [
+            'totalRevenue' => $totalRevenue,
+            'totalCost' => $totalCost,
+            'profit' => $totalRevenue - $totalCost
+        ];
     }
 }

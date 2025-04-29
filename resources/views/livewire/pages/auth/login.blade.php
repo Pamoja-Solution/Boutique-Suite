@@ -4,7 +4,7 @@ use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
-new #[Layout('layouts.guest')] class extends Component
+new #[Layout('layouts.rien')] class extends Component
 {
     public LoginForm $form;
 
@@ -33,53 +33,84 @@ new #[Layout('layouts.guest')] class extends Component
         $this->redirectIntended(default: route('dashboard'), navigate: request()->header('X-Livewire') === 'true');
     }
 };
- ?>
-
-<div>
-    
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-    <x-validation-errors class="mb-4" />
-
-    <form wire:submit="login">
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="matricule" :value="__('Matricule')" />
-            <x-text-input wire:model="form.matricule" id="matricule" class="block mt-1 w-full mb-2" type="text" name="matricule" required autofocus autocomplete="Matricule" />
-            <x-input-error :messages="$errors->get('form.matricule')" class="mt-2" />
-                <label for="" class="mt-3 text-gray-900 dark:text-gray-200 text-sm">Le Matricule est donné par l'administrateur</label>
+?>
+@section('titre','Se Connecter')
+<div class="min-h-screen flex flex-col md:flex-row">
+    <!-- Image à gauche (visible uniquement sur les grands écrans) -->
+    <div class="hidden md:block md:w-1/2 bg-base-200">
+        <div class="h-full flex items-center justify-center p-8">
+            <img src="{{ asset('blank.jpeg') }}" alt="Illustration de connexion" class=" w-full">
         </div>
+    </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+    <!-- Formulaire à droite -->
+    <div class="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8">
+        <div class="w-full max-w-md space-y-6">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-primary">Connexion</h1>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Entrez vos identifiants pour accéder à votre compte</p>
+            </div>
 
-            <x-text-input wire:model="form.password" id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+            <!-- Session Status -->
+            <x-auth-session-status class="alert alert-info mb-4" :status="session('status')" />
+            <x-validation-errors class="alert alert-error mb-4" />
 
-            <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
+            <form wire:submit="login" class="card bg-base-300 shadow-lg">
+                <div class="card-body">
+                    <!-- Email Address -->
+                    <div class="form-control">
+                        <label class="label" for="matricule">
+                            <span class="label-text">{{ __('Matricule') }}</span>
+                        </label>
+                        <input wire:model="form.matricule" id="matricule" type="text" 
+                               class="input input-bordered w-full" 
+                               name="matricule" required autofocus autocomplete="Matricule" />
+                        <x-input-error :messages="$errors->get('form.matricule')" class="mt-1 text-error text-sm" />
+                        <label class="label">
+                            <span class="label-text-alt text-gray-500">Le Matricule est donné par l'administrateur</span>
+                        </label>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-control mt-4">
+                        <label class="label" for="password">
+                            <span class="label-text">{{ __('Password') }}</span>
+                        </label>
+                        <input wire:model="form.password" id="password" 
+                               class="input input-bordered w-full"
+                               type="password"
+                               name="password"
+                               required autocomplete="current-password" />
+                        <x-input-error :messages="$errors->get('form.password')" class="mt-1 text-error text-sm" />
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="form-control mt-4">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            <input wire:model="form.remember" id="remember" type="checkbox" 
+                                   class="checkbox checkbox-primary" name="remember">
+                            <span class="label-text">{{ __('Remember me') }}</span>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between mt-6">
+                        @if (Route::has('password.request'))
+                            <a class="text-sm link link-primary" 
+                               href="{{ route('password.request') }}" 
+                               wire:navigate>
+                                {{ __('Forgot your password?') }}
+                            </a>
+                        @endif
+
+                        <button type="submit" class="btn btn-primary">
+                            {{ __('Log in') }}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember" class="inline-flex items-center">
-                <input wire:model="form.remember" id="remember" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}" wire:navigate>
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+    </div>
 </div>

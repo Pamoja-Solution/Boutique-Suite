@@ -15,13 +15,13 @@ class VentesTableSeeder extends Seeder
         $clients = Client::pluck('id');
         $vendeurs = User::where('role', 'vendeur')->pluck('id');
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             Vente::create([
                 'client_id' => $clients->random(),
                 'user_id' => $vendeurs->random(),
                 'total' => 0, // Serra mis à jour par les détails
                 'matricule' => 'VNT-' . Str::upper(Str::random(8)),
-                'created_at' => now()->subDays(rand(0, 90))
+                'created_at' => fake()->dateTimeBetween('-1 year', 'now'),//now()->subDays(rand(0, 90))
             ]);
         }
     }
