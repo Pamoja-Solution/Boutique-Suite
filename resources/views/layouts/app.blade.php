@@ -35,6 +35,7 @@
          }
          </style>
          @livewireStyles()
+         <link href="/css/app.css" rel="stylesheet">
         </head>
     <body class="bg-white dark:bg-gray-900 antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">

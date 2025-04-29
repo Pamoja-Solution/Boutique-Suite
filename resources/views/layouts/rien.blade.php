@@ -33,6 +33,7 @@
              font-family: 'Google' !important;
          }
          </style>
+         <link href="/css/app.css" rel="stylesheet">
     </head>
     <body class="">
             {{ $slot }}
