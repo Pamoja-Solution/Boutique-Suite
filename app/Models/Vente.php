@@ -28,6 +28,10 @@ class Vente extends Model
     {
         return $this->belongsTo(Client::class, 'client_id'); 
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id'); 
+    }
     public function detailsVentes()
     {
         return $this->hasMany(DetailVente::class);

@@ -109,8 +109,17 @@ Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
     });
     Route::get('/ventes/{vente}/print-invoice', function(App\Models\Vente $vente) {
         $vente->load(['client', 'details.produit']);
+        $logoPath = config('app.logo');
+        $entreprise=[
+                    'nom' => config('app.name'),
+                    'adresse' => config('app.adresse', '123 Rue du Commerce'),
+                    'telephone' => config('app.telephone', '+1234567890'),
+                    'email' => config('app.email', 'contact@example.com'),
+                    'site_web' => config('app.url'),
+                    'logo' => (public_path($logoPath)) 
+        ];
         
-        $pdf = Pdf::loadView('pdf.invoice', compact('vente'))
+        $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise'))
                 ->setPaper([0, 0, 226.77, 425.19]); // 80mm x 150mm
         
         // Affiche le PDF directement dans le navigateur

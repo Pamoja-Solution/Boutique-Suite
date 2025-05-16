@@ -154,7 +154,11 @@ class GestionVente extends Component
             $this->reset(['selectedProduits', 'quantities', 'newClient']);
             
             // Rediriger vers la route d'impression immédiatement
-            $this->dispatch('openNewTab', url: route('ventes.print-invoice', ['vente' => $vente->id]));
+            $this->dispatch('openNewTab', url: route('ventes.print-invoice', [
+                'vente' => $vente->id,
+                
+            
+            ]));
             
         } catch (\Exception $e) {
             DB::rollBack();
