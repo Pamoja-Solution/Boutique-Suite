@@ -82,7 +82,7 @@
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     @forelse($produits as $produit)
-                                        <tr>
+                                        <tr wire:key="product-card-{{ $produit->id }}-{{ $loop->index }}">
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $produit->nom }}</div>
                                             </td>
@@ -98,6 +98,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <button 
                                                     wire:click="openModal('details', {{ $produit->id }})"
+                                                                wire:key="add-btn-{{ $produit->id }}"
                                                     class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 mr-2">
                                                     Détails
                                                 </button>
@@ -341,7 +342,7 @@
                     
                     <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                         @if($modalType === 'details' && $selectedProduit)
-                            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <div  class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                 <div class="sm:flex sm:items-start">
                                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">

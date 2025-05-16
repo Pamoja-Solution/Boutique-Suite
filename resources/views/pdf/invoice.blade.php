@@ -59,7 +59,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Médicament</th>
+                <th>Produit</th>
                 <th>Qté</th>
                 <th>P. U</th>
                 <th>Total</th>

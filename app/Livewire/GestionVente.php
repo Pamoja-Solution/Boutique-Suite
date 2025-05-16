@@ -203,17 +203,23 @@ class GestionVente extends Component
     public function render()
     {
         $query = Produit::query()
-            ->where(function ($query) {
-                $query->where('nom', 'like', '%' . $this->search . '%')
-                    ->orWhere('reference_interne', 'like', '%' . $this->search . '%');
-            })
-            ->where('stock', '>', 0);
-            
-        // Vérifie si le produit a une date d'expiration et si elle est valide
-        $query->where(function ($query) {
+        ->where(function ($query) {
+            $query->where('nom', 'like', '%' . $this->search . '%')
+                ->orWhere('reference_interne', 'like', '%' . $this->search . '%');
+        })
+        ->where('stock', '>', 0)
+        ->where(function ($query) {
             $query->whereNull('date_expiration')
                 ->orWhere('date_expiration', '>', now());
         });
+
+    // Toujours inclure les produits déjà sélectionnés même s'ils ne correspondent pas à la recherche
+    if (!empty($this->selectedProduits)) {
+        $query->orWhereIn('id', $this->selectedProduits);
+    }
+
+    $produits = $query->paginate(10);
+    
             
         $produits = $query->paginate(10);
         
@@ -238,12 +244,23 @@ class GestionVente extends Component
     }
     
     public function addToCart($produitId)
-    {
-        if (!in_array($produitId, $this->selectedProduits)) {
-            $this->selectedProduits[] = $produitId;
-            $this->quantities[$produitId] = 1;
-        }
+{
+    // Vérifier si le produit existe dans la base
+    $produit = Produit::find($produitId);
+    
+    if (!$produit) {
+        return;
     }
+
+    // Ajouter seulement si pas déjà dans le panier
+    if (!in_array($produitId, $this->selectedProduits)) {
+        $this->selectedProduits[] = $produitId;
+        $this->quantities[$produitId] = 1;
+    }
+    
+    // Forcer le rafraîchissement sans réinitialiser la pagination
+    $this->dispatch('cartUpdated');
+}
     
     public function removeFromCart($produitId)
     {
