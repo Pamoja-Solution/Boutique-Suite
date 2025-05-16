@@ -37,24 +37,35 @@
          @livewireStyles()
          <link href="/css/app.css" rel="stylesheet">
         </head>
-    <body class="bg-white dark:bg-gray-900 antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <livewire:layout.navigation />
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+        <body class="antialiased bg-base-300">
+            <div class="min-h-screen flex flex-col">
+                <livewire:layout.navigation />
+    
+                <!-- Page Heading -->
+                @if (isset($header))
+                    <header class="bg-base-300 shadow-sm">
+                        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endif
+    
+                <!-- Page Content -->
+                <main class="flex-grow container mx-auto px-2 sm:px-3 lg:px-4 py-3">
+                    {{ $slot }}
+                </main>
+    
+                <!-- Footer (optionnel) -->
+                <footer class="bg-base-200 text-base-content py-6 mt-auto">
+                    <div class="container mx-auto px-4 text-center">
+                        <p>© {{ date('Y') }} Boutique - Gestion. Tous droits réservés.</p>
                     </div>
-                </header>
-            @endif
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
-        @livewireScripts()
-    </body>
+                </footer>
+            </div>
+    
+            @livewireScripts()
+            
+            <!-- Theme toggle script -->
+           
+        </body>
 </html>

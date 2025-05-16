@@ -108,8 +108,16 @@ class FuturistSalesDashboard extends Component
         $vente = Vente::forCurrentUser() // Ajouté
             ->with(['client', 'details.produit'])
             ->findOrFail($saleId);
-
-        $pdf = Pdf::loadView('pdf.invoice', compact('vente'))
+            $logoPath = config('app.logo');
+            $entreprise=[
+                        'nom' => config('app.name'),
+                        'adresse' => config('app.adresse', '123 Rue du Commerce'),
+                        'telephone' => config('app.telephone', '+1234567890'),
+                        'email' => config('app.email', 'contact@example.com'),
+                        'site_web' => config('app.url'),
+                        'logo' => (public_path($logoPath)) 
+            ];
+        $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise'))
                 ->setPaper([0, 0, 226.77, 425.19]); // 80mm x 150mm en points (1mm ≈ 2.83 points)
 
         return response()->streamDownload(

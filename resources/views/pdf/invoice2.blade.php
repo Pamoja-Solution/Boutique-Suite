@@ -88,7 +88,7 @@
     <div class="header">
         <h1>{{ $entreprise['nom'] }}</h1>
         <img src="{{ $entreprise['logo'] }}" class="header-logo">
-        <p>{{ $entreprise['adresse'] }} </p>
+        <p>{{ $entreprise['adresse'] }}</p>
         <p>Tél: {{ $entreprise['telephone'] }} • {{ $entreprise['email'] }}</p>
         <p>Site web: 
             <a href="{{ $entreprise['site_web'] }}" target="_blank" rel="noopener noreferrer">{{ $entreprise['site_web'] }}</a>

@@ -371,7 +371,7 @@
                         <button wire:click="sendEmail({{ $selectedSale->id ?? '' }})" class="futurist-btn bg-green-700 px-2 py-2 rounded rounded-lg hover:bg-green-600">
                             <i class="fas fa-envelope mr-2"></i> Envoyer par email
                         </button>
-                        <button wire:click="hideDetails" class="futurist-btn bg-gray-700 px-2 py-2 rounded rounded-lg hover:bg-gray-600">
+                        <button wire:click="hideDetails" class="futurist-btn bg-gray-700 px-2 py-2  rounded-lg hover:bg-gray-600">
                             Fermer
                         </button>
                     </div>
