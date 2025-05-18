@@ -21,7 +21,7 @@ new class extends Component
 <nav x-data="{ open: false }" class="bg-base-100 border-b border-base-200 shadow-sm">
     <!-- Primary Navigation Menu -->
     <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex-1">
+        <div class="flex-1 min-w-0">
             <!-- Logo -->
             
 
