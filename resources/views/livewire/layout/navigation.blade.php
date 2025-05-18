@@ -27,7 +27,7 @@ new class extends Component
 
             <!-- Navigation Links -->
             <div class="hidden sm:flex gap-1 ms-4">
-                <a href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" wire:navigate>
+                <a href="{{ route('dashboard') }}"  wire:navigate>
                     <i class="fas fa-tachometer-alt mr-2"></i>
                     {{ __('Dashboard') }}
                 </a>
