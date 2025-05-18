@@ -6,6 +6,7 @@ use App\Models\Produit;
 use App\Models\Vente;
 use App\Models\Achat;
 use App\Models\Client;
+use App\Models\User;
 use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
@@ -22,27 +23,30 @@ class Dashboard extends Component
         $dateRange = $this->getDateRange();
         
         // Statistiques générales
-        $totalProduits = Produit::count(); // Non affecté par la période
-        $totalClients = Client::count();   // Non affecté par la période
+        $totalProduits = Produit::count();
+        $totalClients = Client::count();
         
         // Statistiques filtrées par période
         $totalVentes = Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->count();
         $totalAchats = Achat::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->count();
         
-        // Médicaments à faible stock (moins de 10 unités) - Non affecté par la période
+        // Médicaments à faible stock
         $lowStockProduits = Produit::where('stock', '<', 10)->get();
         
-        // Médicaments qui expirent bientôt (dans les 30 jours) - Non affecté par la période
+        // Médicaments qui expirent bientôt
         $expiringProduits = Produit::where('date_expiration', '<=', Carbon::now()->addDays(30))->get();
         
         // Ventes par période
         $salesData = $this->getSalesData($dateRange);
         
-        // Top 5 des médicaments les plus vendus (filtré par période)
+        // Top 5 des médicaments les plus vendus
         $topSellingProduits = $this->getTopSellingProduits($dateRange);
         
-        // Statistiques financières (filtrées par période)
+        // Statistiques financières
         $financialStats = $this->getFinancialStats($dateRange);
+        
+        // Statistiques des vendeurs pour aujourd'hui
+        $todaySalesBySeller = $this->getTodaySalesBySeller();
         
         return view('livewire.dashboard', [
             'totalProduits' => $totalProduits,
@@ -56,8 +60,33 @@ class Dashboard extends Component
             'totalRevenue' => $financialStats['totalRevenue'],
             'totalCost' => $financialStats['totalCost'],
             'profit' => $financialStats['profit'],
-            'period' => $this->period
+            'period' => $this->period,
+            'todaySalesBySeller' => $todaySalesBySeller // Ajout des stats des vendeurs
         ]);
+    }
+
+    private function getTodaySalesBySeller()
+    {
+        $today = Carbon::today();
+        $endOfDay = Carbon::today()->endOfDay();
+        
+        return User::whereHas('ventes', function($query) use ($today, $endOfDay) {
+                $query->whereBetween('created_at', [$today, $endOfDay]);
+            })
+            ->withCount(['ventes as sales_count' => function($query) use ($today, $endOfDay) {
+                $query->whereBetween('created_at', [$today, $endOfDay]);
+            }])
+            ->withSum(['ventes as sales_amount' => function($query) use ($today, $endOfDay) {
+                $query->whereBetween('created_at', [$today, $endOfDay]);
+            }], 'total')
+            ->get()
+            ->map(function($user) {
+                return [
+                    'name' => $user->name,
+                    'sales_count' => $user->sales_count,
+                    'sales_amount' => $user->sales_amount
+                ];
+            });
     }
     
     public function changePeriod($period)

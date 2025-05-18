@@ -102,4 +102,8 @@ class User extends Authenticatable
         return 'matricule';
     }
 
+    public function ventes()
+    {
+        return $this->hasMany(Vente::class); // Assurez-vous que 'vendeur_id' est le bon nom de colonne
+    }
 }

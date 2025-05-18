@@ -99,9 +99,35 @@
             <div class="card bg-base-100 shadow-md">
                 <div class="card-body">
                     <h3 class="card-title text-lg">Évolution des ventes</h3>
-                    <div class="mt-4 h-64">
-                        <canvas id="salesChart"></canvas>
-                    </div>
+                    @if($todaySalesBySeller->isNotEmpty())
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h3 class="card-title">Ventes par vendeur aujourd'hui</h3>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Nombre de ventes</th>
+                                            <th>Montant total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($todaySalesBySeller as $seller)
+                                        <tr>
+                                            <td>{{ $seller['name'] }}</td>
+                                            <td>{{ $seller['sales_count'] }}</td>
+                                            <td>{{ number_format($seller['sales_amount'], 2) }} FC</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        @else
+                        <div class="alert alert-info">Aucune vente enregistrée aujourd'hui.</div>
+                        @endif
                 </div>
             </div>
             
