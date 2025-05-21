@@ -37,21 +37,31 @@ class ProduitManager extends Component
         'taxable' => 'required|boolean',
     ];
 
-    public function updatedRayonId($value)
+  // Supprimez la méthode updatedRayonId() et remplacez-la par :
+public function updatedRayonId($value)
 {
     $this->sous_rayon_id = null;
     $this->sousRayons = SousRayon::where('rayon_id', $value)->get();
 }
-
+    private function generateRandomBarcode()
+    {
+        // Format: ANNEE(2)MOISJOURHEUREMINUTESECONDE + 3 chiffres aléatoires
+        $now = now();
+        $datePart = $now->format('ymdHis'); // Format: 240521154530 (24=année, 05=mois, 21=jour, etc.)
+        $randomPart = str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT);
+        
+        return $datePart . $randomPart;
+    }
 
     public function render()
     {
-                abort_if(!Auth::user()?->isGerant(), 403);  
+        abort_if(!Auth::user()?->isGerant(), 403);  
 
         return view('livewire.produit-manager', [
             'produits' => Produit::where('nom', 'like', "%{$this->search}%")
                             ->orWhere('reference_interne', 'like', "%{$this->search}%")
                             ->orWhere('code_barre', 'like', "%{$this->search}%")
+                            ->orderByDesc('id')
                             ->paginate(10),
             'fournisseurs' => Fournisseur::all(),
             'rayons' => Rayon::all(),
@@ -60,17 +70,25 @@ class ProduitManager extends Component
                             : collect(),
         ]);
     }
-
-    public function create()
+    public function mount()
     {
-        $this->resetInputFields();
-        $this->action = 'create';
-        $this->openModal();
-         // Charger les sous-rayons si rayon_id est déjà défini
+        // Initialiser les sous-rayons si rayon_id est déjà défini
         if ($this->rayon_id) {
             $this->sousRayons = SousRayon::where('rayon_id', $this->rayon_id)->get();
         }
     }
+    
+    public function create()
+{
+    $this->resetInputFields();
+    $this->action = 'create';
+    $this->code_barre = $this->generateRandomBarcode(); // Génération automatique
+    $this->openModal();
+    
+    if ($this->rayon_id) {
+        $this->sousRayons = SousRayon::where('rayon_id', $this->rayon_id)->get();
+    }
+}
 
     public function addStock($id)
     {
@@ -120,7 +138,7 @@ class ProduitManager extends Component
             'rayon_id' => $this->rayon_id,
             'sous_rayon_id' => $this->sous_rayon_id,
             'reference_interne' => $this->reference_interne ?? Produit::generateReference(),
-            'code_barre' => $this->code_barre,
+            'code_barre' => $this->code_barre, // Utilise le code généré automatiquement
             'unite_mesure' => $this->unite_mesure,
             'taxable' => $this->taxable,
         ]);
@@ -133,7 +151,8 @@ class ProduitManager extends Component
 
     public function edit($id)
     {
-        $produit = Produit::findOrFail($id);
+        $produit = Produit::with('sousRayon')->findOrFail($id);
+        
         $this->produit_id = $id;
         $this->nom = $produit->nom;
         $this->description = $produit->description;
@@ -142,16 +161,21 @@ class ProduitManager extends Component
         $this->stock = $produit->stock;
         $this->seuil_alerte = $produit->seuil_alerte;
         $this->fournisseur_id = $produit->fournisseur_id;
-        $this->rayon_id = $produit->rayon_id;
-        $this->sous_rayon_id = $produit->sous_rayon_id;
+        
+        // Définir le rayon_id à partir du sous-rayon
+        if ($produit->sous_rayon_id) {
+            $this->rayon_id = $produit->sousRayon->rayon_id;
+            $this->sous_rayon_id = $produit->sous_rayon_id;
+            $this->sousRayons = SousRayon::where('rayon_id', $this->rayon_id)->get();
+        } else {
+            $this->rayon_id = $produit->rayon_id;
+            $this->sous_rayon_id = null;
+        }
+        
         $this->reference_interne = $produit->reference_interne;
         $this->code_barre = $produit->code_barre;
         $this->unite_mesure = $produit->unite_mesure;
         $this->taxable = $produit->taxable;
-        // Charger les sous-rayons correspondants
-        if ($this->rayon_id) {
-            $this->sousRayons = SousRayon::where('rayon_id', $this->rayon_id)->get();
-        }
 
         $this->action = 'edit';
         $this->openModal();
@@ -191,15 +215,13 @@ class ProduitManager extends Component
     }
 
     private function resetInputFields()
-    {
-        $this->reset([
-            'nom', 'description', 'prix_vente', 'prix_achat', 'stock', 'seuil_alerte',
-            'fournisseur_id', 'rayon_id', 'sous_rayon_id', 'produit_id', 'reference_interne',
-            'code_barre', 'unite_mesure', 'taxable', 'stock_a_ajouter'
-        ]);
-        $this->unite_mesure = 'unité';
-        $this->taxable = true;
-        $this->sousRayons = collect(); // Réinitialiser la liste des sous-rayons
-
-    }
+{
+    $this->reset([
+        'nom', 'description', 'prix_vente', 'prix_achat', 'stock', 'seuil_alerte',
+        'fournisseur_id', 'rayon_id', 'sous_rayon_id', 'produit_id', 'reference_interne',
+        'code_barre', 'unite_mesure', 'taxable', 'stock_a_ajouter'
+    ]);
+    $this->unite_mesure = 'unité';
+    $this->taxable = true;
+}
 }

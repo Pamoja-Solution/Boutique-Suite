@@ -59,14 +59,14 @@
                                 <div class="flex justify-end gap-2">
                                     <button 
                                         wire:click="edit({{ $taux->id }})" 
-                                        class="btn btn-ghost btn-sm text-info"
+                                        class="btn btn-primary btn-md text-info"
                                         title="Modifier"
                                     >
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button 
                                         wire:click="confirmDelete({{ $taux->id }})" 
-                                        class="btn btn-ghost btn-sm text-error"
+                                        class="btn btn-error btn-md "
                                         title="Supprimer"
                                     >
                                         <i class="fas fa-trash-alt"></i>
@@ -158,7 +158,7 @@
                     </div>
                     
                     <div class="modal-action">
-                        <button type="button" wire:click="closeModal" class="btn">Annuler</button>
+                        <button type="button" wire:click="closeModal" class="btn btn-error">Annuler</button>
                         <button type="submit" class="btn btn-primary">Enregistrer</button>
                     </div>
                 </form>

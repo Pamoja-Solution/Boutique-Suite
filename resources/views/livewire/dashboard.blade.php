@@ -3,6 +3,9 @@
         <!-- En-tête -->
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-3xl font-bold text-base-content">Tableau de Bord</h2>
+            <div class="mt-1">
+                @livewire('taux-change-scroller')
+            </div>
             <div class="join">
                 <button wire:click="changePeriod('week')" 
                     class="join-item btn {{ $period === 'week' ? 'btn-primary' : 'btn-ghost' }}">
@@ -33,9 +36,7 @@
                         <div class="ml-4">
                             <h3 class="text-sm font-medium text-gray-500">Total Produits</h3>
                             <p class="text-2xl font-bold">{{ $totalProduits }}</p>
-                            <div class="mt-1">
-                                @livewire('taux-change-scroller')
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

@@ -70,7 +70,7 @@
                                     <span class="badge 
                                         {{ $produit->stock > $produit->seuil_alerte ? 'badge-success' : 
                                           ($produit->stock > 0 ? 'badge-warning' : 'badge-error') }}">
-                                        {{ $produit->stock }} {{ $produit->unite_mesure }}
+                                        {{ $produit->stock }} {{ $produit->unite_mesure }}{{ $produit->stock>1 ?"s":"" }}
                                     </span>
                                     @if($produit->stock <= $produit->seuil_alerte)
                                         <div class="text-xs text-error">Seuil: {{ $produit->seuil_alerte }}</div>
@@ -181,18 +181,7 @@
                                 @error('nom') <span class="text-error text-xs">{{ $message }}</span> @enderror
                             </div>
                             
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">Description</span>
-                                </label>
-                                <textarea 
-                                    id="description" 
-                                    wire:model.defer="description" 
-                                    rows="3" 
-                                    class="textarea textarea-bordered"
-                                ></textarea>
-                                @error('description') <span class="text-error text-xs">{{ $message }}</span> @enderror
-                            </div>
+                           
                             
                             <div class="form-control">
                                 <label class="label">
@@ -296,13 +285,14 @@
                                 </label>
                                 <select 
                                     id="rayon_id" 
-                                    wire:model="rayon_id" 
-                                    wire:change="$refresh" 
+                                    wire:model.live="rayon_id"  
                                     class="select select-bordered"
                                 >
                                     <option value="">Sélectionner un rayon</option>
                                     @foreach($rayons as $rayon)
-                                        <option value="{{ $rayon->id }}">{{ $rayon->nom }}</option>
+                                        <option value="{{ $rayon->id }}" {{ $rayon_id == $rayon->id ? 'selected' : '' }}>
+                                            {{ $rayon->nom }}
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('rayon_id') <span class="text-error text-xs">{{ $message }}</span> @enderror
@@ -321,7 +311,9 @@
                                     <option value="">Sélectionner un sous-rayon</option>
                                     @if($rayon_id)
                                         @foreach($sousRayons as $sousRayon)
-                                            <option value="{{ $sousRayon->id }}">{{ $sousRayon->nom }}</option>
+                                            <option value="{{ $sousRayon->id }}" {{ $sous_rayon_id == $sousRayon->id ? 'selected' : '' }}>
+                                                {{ $sousRayon->nom }}
+                                            </option>
                                         @endforeach
                                     @endif
                                 </select>
@@ -345,12 +337,24 @@
                                 <label class="label">
                                     <span class="label-text">Code-barres</span>
                                 </label>
-                                <input 
-                                    type="text" 
-                                    id="code_barre" 
-                                    wire:model.defer="code_barre" 
-                                    class="input input-bordered"
-                                >
+                                <div class="flex gap-2">
+                                    <input 
+                                        type="text" 
+                                        id="code_barre" 
+                                        wire:model.defer="code_barre" 
+                                        class="input input-bordered flex-1"
+                                        readonly
+                                    >
+                                    @if($action == 'create')
+                                    <button 
+                                        type="button" 
+                                        wire:click="$set('code_barre', '{{ $this->generateRandomBarcode() }}')" 
+                                        class="btn btn-outline"
+                                    >
+                                        Regénérer
+                                    </button>
+                                    @endif
+                                </div>
                                 @error('code_barre') <span class="text-error text-xs">{{ $message }}</span> @enderror
                             </div>
                         </div>
