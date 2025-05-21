@@ -12,6 +12,7 @@ use App\Livewire\VendeurMedicaments;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Livewire\Dashboard;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\InventaireController;
 use App\Http\Controllers\MonnaieController;
 use App\Livewire\UserManager;
 use App\Livewire\MedicamentManager;
@@ -28,6 +29,7 @@ use App\Livewire\GestionStockSimple;
 use App\Livewire\GestionTauxChange;
 use App\Livewire\LesVentes;
 use App\Livewire\MonnaieManager;
+use App\Livewire\SalesReport;
 use App\Livewire\TauxChangeManager;
 
 Route::view('/', 'welcome');
@@ -97,6 +99,7 @@ Route::middleware(['role:vendeur,gerant,superviseur'
         Route::get('/vendeur/produits', GestionVente::class)->name('vendeur.produits');
         Route::get('/vendeur', [HomeController::class, 'Sale'])->name('vendeur.stat');
         Route::get('/statistiques', LesVentes::class)->name('stats');
+        Route::get('/rapports', SalesReport::class)->name('rapports');
     });
     Route::get("/depenses", ExpenseManager::class)->middleware(['role:vendeur,gerant,superviseur'])->name("depenses");
 // Dans routes/web.php
@@ -126,6 +129,18 @@ Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
         return $pdf->stream("facture_{$vente->id}.pdf");
     })->name('ventes.print-invoice');
     
+    Route::middleware(['auth'])->group(function () {
+        // Autres routes...
+        
+        // Routes pour la gestion des inventaires
+        Route::prefix('inventaires')->name('inventaires.')->group(function () {
+            Route::get('/', [InventaireController::class, 'index'])->name('index');
+            Route::get('/create', [InventaireController::class, 'create'])->name('create');
+            Route::get('/{id}', [InventaireController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [InventaireController::class, 'edit'])->name('edit');
+            Route::get('/{inventaireId}/mouvements', [InventaireController::class, 'mouvements'])->name('mouvements');
+        });
+    });
     
     
     

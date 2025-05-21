@@ -57,27 +57,31 @@ class LesVentes extends Component
         $this->dispatch('updateSalesChart', data: $this->salesChartData);
     }
 
-    public function loadChartData()
-    {
-        $salesData = Vente::query()
-            ->selectRaw('DATE(created_at) as date, SUM(total) as total')
-            ->whereBetween('created_at', [
-                Carbon::parse($this->startDate)->startOfDay(),
-                Carbon::parse($this->endDate)->endOfDay()
-            ])
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+ // ...
 
-        $this->salesChartData = [
-            'labels' => $salesData->pluck('date')->map(function ($date) {
-                return Carbon::parse($date)->format('d M');
-            })->toArray(),
-            'data' => $salesData->pluck('total')->toArray()
-        ];
+public function loadChartData()
+{
+    $salesData = Vente::query()
+        ->selectRaw('DATE(created_at) as date, SUM(total) as total')
+                    ->whereBetween('created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
 
-        $this->dispatch('updateSalesChart', data: $this->salesChartData);
-    }
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+    $this->salesChartData = [
+        'labels' => $salesData->pluck('date')->map(function ($date) {
+            return Carbon::parse($date)->translatedFormat('d M');
+        })->toArray(),
+        'data' => $salesData->pluck('total')->toArray(),
+        'colors' => ['rgba(99, 102, 241, 0.2)', 'rgba(99, 102, 241, 1)'] // Couleurs DaisyUI
+    ];
+
+
+    $this->dispatch('updateSalesChart', data: $this->salesChartData);
+}
+
+// ...
+
 
     public function sortBy($field)
     {
@@ -106,7 +110,18 @@ class LesVentes extends Component
     {
         $vente = Vente::with(['client', 'details.produit'])->findOrFail($saleId);
 
-        $pdf = Pdf::loadView('pdf.invoice', compact('vente'))
+        $logoPath = config('app.logo');
+        $entreprise=[
+                    'nom' => config('app.name'),
+                    'adresse' => config('app.adresse', '123 Rue du Commerce'),
+                    'telephone' => config('app.telephone', '+1234567890'),
+                    'email' => config('app.email', 'contact@example.com'),
+                    'site_web' => config('app.url'),
+                    'logo' => (public_path($logoPath)) 
+        ];
+        
+
+        $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise'))
                 ->setPaper([0, 0, 226.77, 425.19]); // 80mm x 150mm en points (1mm ≈ 2.83 points)
 
         return response()->streamDownload(
@@ -130,7 +145,9 @@ class LesVentes extends Component
 
     public function resetFilters()
     {
-        $this->reset(['startDate', 'endDate', 'selectedClient', 'search']);
+        $this->reset(['selectedClient', 'search']);
+        $this->startDate = Carbon::today()->subDays(30)->format('Y-m-d');
+        $this->endDate = Carbon::today()->format('Y-m-d');
         $this->loadChartData();
     }
 
@@ -190,21 +207,44 @@ class LesVentes extends Component
     }
 
     public function getSalesCountTrendProperty()
-    {
-        $currentPeriod = Vente::query()
-            ->whereBetween('created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
-            ->count();
-            
-        $previousPeriod = Vente::query()
-            ->whereBetween('created_at', [
-                Carbon::parse($this->startDate)->subDays(Carbon::parse($this->startDate)->diffInDays($this->endDate))->startOfDay(),
-                Carbon::parse($this->startDate)->subDay()->endOfDay()
-            ])
-            ->count();
-            
-        return $previousPeriod != 0 ? round(($currentPeriod - $previousPeriod) / $previousPeriod * 100, 2) : 0;
+{
+    // Si les dates ne sont pas définies, retourner 0
+    if (empty($this->startDate) || empty($this->endDate)) {
+        return 0;
     }
 
+    try {
+        $currentStart = Carbon::parse($this->startDate);
+        $currentEnd = Carbon::parse($this->endDate)->endOfDay();
+        
+        // Calculer la différence en jours entre les dates
+        $daysDiff = $currentStart->diffInDays($currentEnd);
+
+        // Période actuelle
+        $currentPeriod = Vente::query()
+            ->whereBetween('created_at', [$currentStart, $currentEnd])
+            ->count();
+            
+        // Période précédente (même durée que la période actuelle)
+        $previousStart = $currentStart->copy()->subDays($daysDiff + 1);
+        $previousEnd = $currentStart->copy()->subDay()->endOfDay();
+
+        $previousPeriod = Vente::query()
+            ->whereBetween('created_at', [$previousStart, $previousEnd])
+            ->count();
+            
+        // Calcul du pourcentage de changement
+        if ($previousPeriod > 0) {
+            return round(($currentPeriod - $previousPeriod) / $previousPeriod * 100, 2);
+        } else {
+            // Si pas de ventes précédentes mais des ventes actuelles, retourner +100%
+            return $currentPeriod > 0 ? 100 : 0;
+        }
+    } catch (\Exception $e) {
+        // En cas d'erreur (par exemple format de date invalide), retourner 0
+        return 0;
+    }
+}
     public function getProduitsTrendProperty()
     {
         $currentPeriod = DB::table('details_vente')

@@ -1,7 +1,7 @@
 <div>
     @include('gerant.nav')
     <div class="p-4 min-h-screen">
-        <h1 class="text-2xl font-bold mb-6">Statistiques des Utilisateurs</h1>
+        <h1 class="text-2xl font-bold mb-6">Statistiques des Vendeurs</h1>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Liste des utilisateurs -->

@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-base-100 border-b border-base-200 shadow-sm">
+<nav x-data="{ open: false }" class="bg-base-100 rounded-box  border-b border-base-200 shadow-sm mb-6">
     <!-- Desktop Navigation -->
     <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Logo et liens principaux -->
@@ -18,7 +18,11 @@
                     <i class="fas fa-receipt mr-2"></i>
                     {{ __('Dépenses') }}
                 </x-nav-link>
-                
+                <x-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
+                    <i class="fas fa-cash-register mr-2"></i>
+                    {{ __('Ventes') }}
+                </x-nav-link>
+
                 @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
                 <!-- Menu Admin -->
                 <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
@@ -31,10 +35,7 @@
                     {{ __('Stock') }}
                 </x-nav-link>
                 
-                <x-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
-                    <i class="fas fa-cash-register mr-2"></i>
-                    {{ __('Ventes') }}
-                </x-nav-link>
+                
                 
                 <x-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')">
                     <i class="fas fa-sitemap mr-2"></i>
@@ -94,6 +95,18 @@
                                 Statistiques
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('inventaires.index') }}">
+                                <i class="fa-solid fa-tags"></i>
+                                Inventaires
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('rapports') }}">
+                                <i class="fas fa-chart-line"></i>
+                                Rapport
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 @endif
@@ -125,6 +138,10 @@
                 {{ __('Dépenses') }}
             </x-responsive-nav-link>
 
+            <x-responsive-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
+                <i class="fas fa-cash-register mr-3"></i>
+                {{ __('Ventes') }}
+            </x-responsive-nav-link>
             @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
             <!-- Menu Admin -->
             <x-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
@@ -137,10 +154,7 @@
                 {{ __('Stock') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
-                <i class="fas fa-cash-register mr-3"></i>
-                {{ __('Ventes') }}
-            </x-responsive-nav-link>
+            
 
             <x-responsive-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')">
                 <i class="fas fa-sitemap mr-3"></i>
@@ -185,6 +199,15 @@
                     <x-responsive-nav-link href="{{ route('user.statistics') }}">
                         <i class="fas fa-chart-line mr-3"></i>
                         Statistiques
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link href="{{ route('inventaires.index') }}">
+                            <i class="fa-solid fa-tags"></i>
+                            Inventaires
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link href="{{ route('rapports') }}">
+                        <i class="fas fa-chart-line mr-3"></i>
+                        Rapports
                     </x-responsive-nav-link>
                 </div>
             </div>

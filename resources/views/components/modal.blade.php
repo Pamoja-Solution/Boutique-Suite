@@ -1,7 +1,8 @@
 @props([
-    'name',
     'show' => false,
-    'maxWidth' => '2xl'
+    'maxWidth' => '2xl',
+    'name' => null, // Rendre le name optionnel
+
 ])
 
 @php
@@ -11,6 +12,7 @@ $maxWidth = [
     'lg' => 'sm:max-w-lg',
     'xl' => 'sm:max-w-xl',
     '2xl' => 'sm:max-w-2xl',
+    '4xl' => 'sm:max-w-4xl',
 ][$maxWidth];
 @endphp
 
@@ -39,8 +41,10 @@ $maxWidth = [
             document.body.classList.remove('overflow-y-hidden');
         }
     })"
+    @if($name) {{-- Seulement si name est fourni --}}
     x-on:open-modal.window="$event.detail == '{{ $name }}' ? show = true : null"
     x-on:close-modal.window="$event.detail == '{{ $name }}' ? show = false : null"
+    @endif
     x-on:close.stop="show = false"
     x-on:keydown.escape.window="show = false"
     x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"

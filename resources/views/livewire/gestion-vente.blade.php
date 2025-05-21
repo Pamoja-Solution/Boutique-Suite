@@ -2,12 +2,14 @@
     @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
     @include('gerant.nav')
     @endif
-    <div class="py-6 bg-base-100 min-h-screen">
+    <div class="py-6 bg-base-100 min-h-screen rounded-box">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- En-tête -->
             <div class="bg-base-100 shadow-sm rounded-box p-6 mb-6">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <h2 class="text-2xl font-bold text-base-content">Gestion des ventes</h2>
+                    @livewire('taux-change-scroller')
+
                     
                     <div class="flex flex-wrap gap-2">
                         <a href="{{ route('vendeur.stat') }}" class="btn btn-outline">
@@ -29,34 +31,33 @@
                 </div>
     
                 <!-- Dashboard metrics -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                <!--div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
                     <div class="stats bg-primary text-primary-content shadow">
                         <div class="stat">
                             <div class="stat-title">Ventes récentes</div>
-                            <div class="stat-value">{{ count($this->getRecentVentes()) }}</div>
+                            <div class="stat-value">{ { count($this->getRecentVentes()) }}</div>
                         </div>
                     </div>
                     
                     <div class="stats bg-warning text-warning-content shadow">
                         <div class="stat">
                             <div class="stat-title">Produits bientôt expirés</div>
-                            <div class="stat-value">{{ count($this->getProduitsExpiration()) }}</div>
+                            <div class="stat-value">{ { count($this->getProduitsExpiration()) }}</div>
                         </div>
                     </div>
                     
                     <div class="stats bg-error text-error-content shadow">
                         <div class="stat">
                             <div class="stat-title">Stock faible</div>
-                            <div class="stat-value">{{ count($this->getProduitsLowStock()) }}</div>
+                            <div class="stat-value">{ { count($this->getProduitsLowStock()) }}</div>
                         </div>
                     </div>
                     
                     <div class="stats bg-base-200 shadow">
                         <div class="stat">
-                            @livewire('taux-change-scroller')
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

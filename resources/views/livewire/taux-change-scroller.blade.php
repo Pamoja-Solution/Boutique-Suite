@@ -1,26 +1,26 @@
-<div class="">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 overflow-x-auto whitespace-nowrap">
-        <div class="flex space-x-6 animate-scroll-slow">
-            @forelse ($tauxChanges as $taux)
-                <div class="flex items-center space-x-2">
-                    <span class="font-semibold dark:text-white">{{ $taux->monnaieSource->code }} → {{ $taux->monnaieCible->code }}</span>
-                    <span class="text-gray-500 dark:text-gray-400">{{ number_format($taux->taux, 6) }}</span>
-                    <span class="text-xs text-gray-400 dark:text-gray-500">({{ \Carbon\Carbon::parse($taux->date_effet)->format('d/m/Y') }})</span>
-                </div>
-            @empty
-                <span class="text-gray-400 dark:text-gray-500">Aucun taux disponible.</span>
-            @endforelse
-        </div>
+<div class="bg-secondary rounded-box shadow  overflow-hidden">
+    <div class="relative overflow-x-hidden">
+      <div class="flex space-x-4 animate-infinite-scroll whitespace-nowrap py-2">
+        @forelse ($tauxChanges as $taux)
+          <div class=" inline-flex items-center gap-2 bg-neutral/10 p-3 rounded-box">
+            <span class="font-semibold">{{ $taux->monnaieSource->code }} → {{ $taux->monnaieCible->code }}</span>
+            <span class="text-neutral text-md font-bold">{{ number_format($taux->taux, 2) }}</span>
+            <span class="badge text-sm text-neutral/50">{{ \Carbon\Carbon::parse($taux->date_effet)->format('d/m/Y') }}</span>
+          </div>
+        @empty
+          <span class="text-neutral-content/50">Aucun taux disponible.</span>
+        @endforelse
+      </div>
     </div>
 
-    <style>
-    @keyframes scroll-slow {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
+  <style>
+    .animate-infinite-scroll {
+      animation: scroll-horizontal 30s linear infinite;
     }
-    .animate-scroll-slow {
-        display: inline-flex;
-        animation: scroll-slow 60s linear infinite;
+    @keyframes scroll-horizontal {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
     }
     </style>
-</div>
+  </div>
+  
