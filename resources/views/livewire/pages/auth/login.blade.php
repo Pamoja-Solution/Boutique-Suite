@@ -53,7 +53,7 @@ new #[Layout('layouts.rien')] class extends Component
 
             <!-- Session Status -->
             <x-auth-session-status class="alert alert-info mb-4" :status="session('status')" />
-            <x-validation-errors class="alert alert-error mb-4" />
+            <x-validation-errors class=" mb-4" />
 
             <form wire:submit="login" class="card bg-base-300 shadow-lg">
                 <div class="card-body">
