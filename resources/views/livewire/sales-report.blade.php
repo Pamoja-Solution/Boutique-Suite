@@ -1,5 +1,6 @@
 <div class="">
     @include('gerant.nav')
+    @section("titre",'Rapport des Ventes')
 
     <div class="p-6 bg-base-100 rounded-box shadow-sm">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -250,7 +251,7 @@
     
             @if($showDetailsModal)
             <div class="modal modal-open">
-                <div class="modal-box max-w-5xl p-0">
+                <div class="modal-box w-11/12 max-w-4xl p-O">
                     <div class="bg-neutral text-neutral-content p-4">
                         <h3 class="text-lg font-medium flex items-center">
                             <i class="fas fa-receipt mr-2 text-info"></i> Détails de la vente {{ $selectedSale->matricule ?? '' }}
@@ -357,13 +358,15 @@
                     </div>
                     
                     <div class="modal-action bg-base-200 p-4">
-                        <button wire:click="printInvoice({{ $selectedSale->id ?? '' }})" class="btn btn-info">
+                        <a href="{{ route('ventes.print-invoice', $selectedSale->id ?? '') }}" 
+                           target="_blank"
+                           class="btn btn-info">
                             <i class="fas fa-print mr-2"></i> Imprimer
-                        </button>
+                        </a>
                         <button wire:click="sendEmail({{ $selectedSale->id ?? '' }})" class="btn btn-success">
                             <i class="fas fa-envelope mr-2"></i> Envoyer
                         </button>
-                        <button wire:click="hideDetails" class="btn btn-error" >Fermer</button>
+                        <button wire:click="hideDetails" class="btn btn-error">Fermer</button>
                     </div>
                 </div>
             </div>

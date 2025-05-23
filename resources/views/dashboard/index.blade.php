@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section("titre","Gestion des Produits")
+    @section("titre","Station de Base")
     @include('gerant.nav')
 
     @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())

@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-base-100">
+<div class="">
     @include("gerant.nav")
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -62,7 +62,7 @@
     <!-- Statistiques Principales -->
     <div class="container mx-auto p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
         <!-- Carte 1: Total des ventes -->
-        <div class="card bg-gradient-to-br from-primary to-secondary text-primary-content">
+        <div class="card bg-accent">
             <div class="card-body">
                 <div class="flex justify-between items-center">
                     <div>
@@ -85,7 +85,7 @@
         </div>
         
         <!-- Carte 2: Nombre de ventes -->
-        <div class="card bg-gradient-to-br from-accent to-info text-accent-content">
+        <div class="card bg-primary">
             <div class="card-body">
                 <div class="flex justify-between items-center">
                     <div>
@@ -108,7 +108,7 @@
         </div>
         
         <!-- Carte 4: Panier moyen -->
-        <div class="card bg-gradient-to-br from-error to-pink-700 text-error-content">
+        <div class="card bg-secondary">
             <div class="card-body">
                 <div class="flex justify-between items-center">
                     <div>

@@ -217,15 +217,14 @@ class GestionVente extends Component
                 ->orWhere('date_expiration', '>', now());
         });
 
-    // Toujours inclure les produits déjà sélectionnés même s'ils ne correspondent pas à la recherche
+    /*/ Toujours inclure les produits déjà sélectionnés même s'ils ne correspondent pas à la recherche
     if (!empty($this->selectedProduits)) {
         $query->orWhereIn('id', $this->selectedProduits);
     }
-
-    $produits = $query->paginate(10);
+*/
     
             
-        $produits = $query->paginate(10);
+        $produits = $query->paginate(20);
         
         $panier = [];
         $total = 0;

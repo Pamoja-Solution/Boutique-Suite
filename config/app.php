@@ -14,7 +14,7 @@ return [
     */
     'name' => env('APP_NAME', 'Boutiques Pour Tous'),
     "logo"=>"/images/default-avatar.png",
-    "adresse"=>'Kinshasa, Av; INSKD N°23, Q.LDEIE, C.MONT - DEDEED',
+    "adresse"=>'Kinshasa, Av; INSKD N23, Q.LDEIE, C.MONT - DEDEED',
             'telephone' => "09736534536",
             'email' =>  'contact@example.com',
 

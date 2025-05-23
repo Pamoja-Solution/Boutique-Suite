@@ -304,7 +304,6 @@
     @if($showDetailsModal)
     <div class="modal modal-open">
         <div class="modal-box max-w-4xl">
-            <h3 class="font-bold text-lg mb-4">Détails de la vente #{{ $selectedSale?->id ?? '' }}</h3>
             
             <h3 class="font-bold text-lg">Détails de la vente #{{ $selectedSale?->id ?? '' }}</h3>
             @if($selectedSale)
@@ -318,7 +317,28 @@
                             <p><span class="font-medium">Vendeur:</span> {{ $selectedSale->user->name ?? 'N/A' }}</p>
                         </div>
                         
-                        <h3 class="font-semibold mt-6 mb-2">Produits</h3>
+                        
+                    </div>
+                    
+                    <div>
+                        <div class="mt-6 p-4 bg-base-200 rounded-box">
+                            <h3 class="font-semibold mb-2">Résumé</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Total produits:</span>
+                                    <span>{{ number_format($selectedSale->total, 0, ',', ' ') }} Fc</span>
+                                </div>
+                                <div class="flex justify-between font-bold border-t pt-2">
+                                    <span>Total:</span>
+                                    <span>{{ number_format($selectedSale->total, 0, ',', ' ') }} Fc</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+                <h3 class="font-semibold mt-6 mb-2">Produits</h3>
                         <div class="overflow-x-auto">
                             <table class="table">
                                 <thead>
@@ -341,31 +361,13 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <div class="mt-6 p-4 bg-base-200 rounded-box">
-                            <h3 class="font-semibold mb-2">Résumé</h3>
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span>Total produits:</span>
-                                    <span>{{ number_format($selectedSale->total, 0, ',', ' ') }} Fc</span>
-                                </div>
-                                <div class="flex justify-between font-bold border-t pt-2">
-                                    <span>Total:</span>
-                                    <span>{{ number_format($selectedSale->total, 0, ',', ' ') }} Fc</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             @endif
             
             <div class="modal-action">
                 <button class="btn" wire:click="$set('showDetailsModal', false)">Fermer</button>
            
                 @if($selectedSale)
-                    <button class="btn btn-primary" wire:click="printInvoice({{ $selectedSale->id }})">
+                    <button class="btn btn-primary"  onclick="window.open('{{ route('ventes.print-invoice', ['vente' => $selectedSale->id]) }}', '_blank')">
                         <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a51.899 51.899 0 0 0-2.649-.762m.764 1.228a51.89 51.89 0 0 1-.764 1.228m0 0a51.89 51.89 0 0 1-.764 1.228M3 3c1.232 0 2.429.106 3.587.307M7.5 3.75A1.5 1.5 0 0 0 6.057 5.5m1.5 1.5A1.5 1.5 0 0 0 7.5 3.75m0 0V5.25m0 3h3.75m-3.75 0V9m0 3h3.75m-3.75 0v3.75m0-3.75h3.75m-3.75 0V15" />
                         </svg>

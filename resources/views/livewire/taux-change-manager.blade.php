@@ -1,5 +1,6 @@
 <div class="">
     @include('gerant.nav')
+    @section("titre","Gestion Taux")
 
 <div class="container mx-auto px-4 py-6">
 

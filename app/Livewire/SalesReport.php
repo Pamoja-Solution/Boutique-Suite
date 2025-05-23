@@ -84,26 +84,49 @@ class SalesReport extends Component
     }
 
     #[Computed]
-    public function salesBySeller()
-    {
-        return User::withSum(['ventes' => function($q) {
-            $q->when($this->reportType === 'daily', fn($q) => $q->whereDate('created_at', $this->startDate))
-              ->when($this->reportType === 'monthly', fn($q) => $q->whereMonth('created_at', Carbon::parse($this->startDate)->month)
-                ->whereYear('created_at', Carbon::parse($this->startDate)->year))
-              ->when($this->reportType === 'custom', fn($q) => $q->whereBetween('created_at', [
-                  Carbon::parse($this->startDate)->startOfDay(),
-                  Carbon::parse($this->endDate)->endOfDay()
-              ]));
-        }], 'total')
-        ->where('role', 'vendeur')
-        ->orderBy('ventes_sum_total', 'desc')
-        ->get()
-        ->map(fn($user) => [
+public function salesBySeller()
+{
+    return User::with(['ventes' => function($q) {
+        $q->when($this->reportType === 'daily', fn($q) => $q->whereDate('created_at', $this->startDate))
+          ->when($this->reportType === 'monthly', fn($q) => $q->whereMonth('created_at', Carbon::parse($this->startDate)->month)
+            ->whereYear('created_at', Carbon::parse($this->startDate)->year))
+          ->when($this->reportType === 'custom', fn($q) => $q->whereBetween('created_at', [
+              Carbon::parse($this->startDate)->startOfDay(),
+              Carbon::parse($this->endDate)->endOfDay()
+          ]));
+    }])
+    ->withSum(['ventes as ventes_sum_total' => function($q) {
+        $q->when($this->reportType === 'daily', fn($q) => $q->whereDate('created_at', $this->startDate))
+          ->when($this->reportType === 'monthly', fn($q) => $q->whereMonth('created_at', Carbon::parse($this->startDate)->month)
+            ->whereYear('created_at', Carbon::parse($this->startDate)->year))
+          ->when($this->reportType === 'custom', fn($q) => $q->whereBetween('created_at', [
+              Carbon::parse($this->startDate)->startOfDay(),
+              Carbon::parse($this->endDate)->endOfDay()
+          ]));
+    }], 'total')
+    ->get()
+    ->map(function($user) {
+        $filteredSalesCount = $user->ventes
+            ->filter(function($vente) {
+                return match($this->reportType) {
+                    'daily' => $vente->created_at->isSameDay($this->startDate),
+                    'monthly' => $vente->created_at->isSameMonth(Carbon::parse($this->startDate)),
+                    'custom' => $vente->created_at->between(
+                        Carbon::parse($this->startDate)->startOfDay(),
+                        Carbon::parse($this->endDate)->endOfDay()
+                    ),
+                    default => true
+                };
+            })->count();
+
+        return [
             'name' => $user->name,
             'total' => $user->ventes_sum_total ?? 0,
-            'sales_count' => $user->ventes()->count()
-        ]);
-    }
+            'sales_count' => $filteredSalesCount,
+        ];
+    });
+}
+
 
     public function generateReport()
     {
@@ -140,28 +163,13 @@ class SalesReport extends Component
     }
 
     public function printInvoice($saleId)
-    {
-        $vente = Vente::with(['client', 'details.produit'])->findOrFail($saleId);
-
-        $logoPath = config('app.logo');
-        $entreprise=[
-                    'nom' => config('app.name'),
-                    'adresse' => config('app.adresse', '123 Rue du Commerce'),
-                    'telephone' => config('app.telephone', '+1234567890'),
-                    'email' => config('app.email', 'contact@example.com'),
-                    'site_web' => config('app.url'),
-                    'logo' => (public_path($logoPath)) 
-        ];
-        
-
-        $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise'))
-                ->setPaper([0, 0, 226.77, 425.19]); // 80mm x 150mm en points (1mm ≈ 2.83 points)
-
-        return response()->streamDownload(
-            fn () => print($pdf->output()), 
-            "facture_{$saleId}.pdf"
-        );
-    }
+{
+    $this->dispatch('openNewTab', 
+        url: route('ventes.direct-print', ['vente' => $saleId])
+    );
+    
+    return redirect()->back();
+}
 
     public function exportReport()
     {
@@ -178,53 +186,66 @@ class SalesReport extends Component
     }
 
     public function exportToPdf()
-    {
-        $sales = Vente::with(['client', 'user', 'details.produit'])
-            ->when($this->selectedUserId !== 'all', fn($q) => $q->where('user_id', $this->selectedUserId))
-            ->when($this->reportType === 'daily', fn($q) => $q->whereDate('created_at', $this->startDate))
-            ->when($this->reportType === 'monthly', fn($q) => $q->whereMonth('created_at', Carbon::parse($this->startDate)->month)
-                ->whereYear('created_at', Carbon::parse($this->startDate)->year))
-            ->when($this->reportType === 'custom', fn($q) => $q->whereBetween('created_at', [
-                Carbon::parse($this->startDate)->startOfDay(),
-                Carbon::parse($this->endDate)->endOfDay()
-            ]))
-            ->orderBy('created_at', 'desc')
-            ->get();
+{
+    $sales = Vente::with(['client', 'user', 'details.produit'])
+        ->when($this->selectedUserId !== 'all', fn($q) => $q->where('user_id', $this->selectedUserId))
+        ->when($this->reportType === 'daily', fn($q) => $q->whereDate('created_at', $this->startDate))
+        ->when($this->reportType === 'monthly', fn($q) => $q->whereMonth('created_at', Carbon::parse($this->startDate)->month)
+            ->whereYear('created_at', Carbon::parse($this->startDate)->year))
+        ->when($this->reportType === 'custom', fn($q) => $q->whereBetween('created_at', [
+            Carbon::parse($this->startDate)->startOfDay(),
+            Carbon::parse($this->endDate)->endOfDay()
+        ]))
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $pdf = Pdf::loadView('exports.sales2-pdf', [
-            'sales' => $sales,
-            'startDate' => $this->startDate,
-            'endDate' => $this->reportType === 'custom' ? $this->endDate : $this->startDate,
-            'reportType' => $this->reportType,
-            'selectedUser' => $this->selectedUserId !== 'all' ? User::find($this->selectedUserId) : null,
-            'salesSummary' => $this->salesSummary,
-            'salesBySeller' => $this->salesBySeller,
-            'includeCharts' => $this->includeCharts,
-            'includeDetails' => $this->includeDetails,
-            'orientation' => $this->pdfOrientation,
-        ]);
+    // Calculer la largeur nécessaire en fonction du contenu
+    $baseWidth = 100; // Largeur de base en mm
+    $perColumnWidth = 20; // Largeur supplémentaire par colonne si nécessaire
+    $calculatedWidth = $baseWidth + (count($sales) * $perColumnWidth); // Exemple de calcul
+    
+    // Dimensions en points (1 mm = 2.83 points)
+    $heightInPoints = 800 * 2.83; // 80 cm en points
+    $widthInPoints = $calculatedWidth * 2.83; // Largeur calculée en points
 
-        $pdf->setPaper('A4', $this->pdfOrientation);
+    $pdf = Pdf::loadView('exports.sales2-pdf', [
+        'sales' => $sales,
+        'startDate' => $this->startDate,
+        'endDate' => $this->reportType === 'custom' ? $this->endDate : $this->startDate,
+        'reportType' => $this->reportType,
+        'selectedUser' => $this->selectedUserId !== 'all' ? User::find($this->selectedUserId) : null,
+        'salesSummary' => $this->salesSummary,
+        'salesBySeller' => $this->salesBySeller,
+        'includeCharts' => $this->includeCharts,
+        'includeDetails' => $this->includeDetails,        'orientation' => $this->pdfOrientation, // Assurez-vous que cette ligne est présente
 
-        $filename = match($this->reportType) {
-            'daily' => 'rapport-journalier-' . Carbon::parse($this->startDate)->format('Y-m-d'),
-            'monthly' => 'rapport-mensuel-' . Carbon::parse($this->startDate)->format('Y-m'),
-            'custom' => 'rapport-personnalise-' . Carbon::parse($this->startDate)->format('Y-m-d') . '-a-' . Carbon::parse($this->endDate)->format('Y-m-d'),
-        };
+    ]);
 
-        if ($this->selectedUserId !== 'all') {
-            $user = User::find($this->selectedUserId);
-            $filename .= '-vendeur-' . Str::slug($user->name);
-        }
+    // Définir le format personnalisé
+    $pdf->setPaper([0, 0, $widthInPoints, $heightInPoints], 'portrait')
+        ->setOption('margin-top', 0)
+        ->setOption('margin-bottom', 0)
+        ->setOption('margin-left', 0)
+        ->setOption('margin-right', 0);
 
-        $filename .= '.pdf';
+    $filename = match($this->reportType) {
+        'daily' => 'rapport-journalier-' . Carbon::parse($this->startDate)->format('Y-m-d'),
+        'monthly' => 'rapport-mensuel-' . Carbon::parse($this->startDate)->format('Y-m'),
+        'custom' => 'rapport-personnalise-' . Carbon::parse($this->startDate)->format('Y-m-d') . '-a-' . Carbon::parse($this->endDate)->format('Y-m-d'),
+    };
 
-        return response()->streamDownload(
-            fn () => print($pdf->output()),
-            $filename
-        );
+    if ($this->selectedUserId !== 'all') {
+        $user = User::find($this->selectedUserId);
+        $filename .= '-vendeur-' . Str::slug($user->name);
     }
 
+    $filename .= '.pdf';
+
+    return response()->streamDownload(
+        fn () => print($pdf->output()),
+        $filename
+    );
+}
     public function exportToExcel()
     {
         $this->validate([

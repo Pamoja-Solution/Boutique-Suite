@@ -25,6 +25,7 @@ use App\Livewire\GestionFournisseurs;
 use App\Livewire\RayonManager;
 use App\Livewire\Auth\Login;
 use App\Livewire\ExpenseManager;
+use App\Livewire\GestionCodesBarres;
 use App\Livewire\GestionStockSimple;
 use App\Livewire\GestionTauxChange;
 use App\Livewire\LesVentes;
@@ -112,23 +113,69 @@ Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
     });
     Route::get('/ventes/{vente}/print-invoice', function(App\Models\Vente $vente) {
         $vente->load(['client', 'details.produit']);
-        $logoPath = config('app.logo');
-        $entreprise=[
-                    'nom' => config('app.name'),
-                    'adresse' => config('app.adresse', '123 Rue du Commerce'),
-                    'telephone' => config('app.telephone', '+1234567890'),
-                    'email' => config('app.email', 'contact@example.com'),
-                    'site_web' => config('app.url'),
-                    'logo' => (public_path($logoPath)) 
+        
+        $entreprise = [
+            'nom' => config('app.name'),
+            'adresse' => config('app.adresse'),
+            'telephone' => config('app.telephone'),
+            'email' => config('app.email'),
+            'site_web' => config('app.url'),
+            'logo' => public_path(config('app.logo'))
         ];
+    
+        // Calcul précis de la hauteur (en points - 1mm = 2.83 points)
+        $baseHeight = 150; // Hauteur de base en mm (sans articles)
+        $perItemHeight = 6; // Hauteur par article en mm
+        $totalHeight = $baseHeight + (count($vente->details) * $perItemHeight);
         
+        // Conversion mm en points (1mm = 2.83 points)
+        $widthInPoints = 80 * 2.83;  // 80mm en points
+        $heightInPoints = $totalHeight * 2.83;
+    
         $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise'))
-                ->setPaper([0, 0, 226.77, 425.19]); // 80mm x 150mm
-        
-        // Affiche le PDF directement dans le navigateur
-        return $pdf->stream("facture_{$vente->id}.pdf");
+                ->setPaper([0, 0, $widthInPoints, $heightInPoints], 'portrait')
+                ->setOption('margin-top', 0)
+                ->setOption('margin-bottom', 0)
+                ->setOption('margin-left', 0)
+                ->setOption('margin-right', 0);
+    
+        return $pdf->stream("facture_{$vente->matricule}.pdf");
     })->name('ventes.print-invoice');
     
+
+
+    Route::get('/ventes/{vente}/direct-print', function(App\Models\Vente $vente) {
+        $vente->load(['client', 'details.produit']);
+        
+        $entreprise = [
+            'nom' => config('app.name'),
+            'adresse' => config('app.adresse'),
+            'telephone' => config('app.telephone'),
+            'email' => config('app.email'),
+            'site_web' => config('app.url'),
+            'logo' => public_path(config('app.logo'))
+        ];
+    
+        // Calcul précis de la hauteur (en points - 1mm = 2.83 points)
+        $baseHeight = 150; // Hauteur de base en mm (sans articles)
+        $perItemHeight = 3; // Hauteur par article en mm
+        $totalHeight = $baseHeight + (count($vente->details) * $perItemHeight);
+        
+        // Conversion mm en points (1mm = 2.83 points)
+        $widthInPoints = 80 * 2.83;  // 80mm en points
+        $heightInPoints = $totalHeight * 2.83;
+    
+        $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise'))
+                ->setPaper([0, 0, $widthInPoints, $heightInPoints], 'portrait')
+                ->setOption('margin-top', 0)
+                ->setOption('margin-bottom', 0)
+                ->setOption('margin-left', 0)
+                ->setOption('margin-right', 0);
+        return $pdf->stream("facture_{$vente->matricule}.pdf");
+    })->name('ventes.direct-print');
+
+
+ 
     Route::middleware(['auth'])->group(function () {
         // Autres routes...
         
@@ -143,5 +190,7 @@ Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
     });
     
     
-    
+    //Route::get('/gestion-codes-barres', GestionCodesBarres::class)->name('gestion.codes-barres');
+    // routes/web.php
+Route::get('/produits/codes-barres', \App\Livewire\ProduitsCodeBarres::class)->name('gestion.codes-barres');
 require __DIR__.'/auth.php';

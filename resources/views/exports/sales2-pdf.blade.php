@@ -4,7 +4,17 @@
     <meta charset="utf-8">
     <title>Rapport des ventes</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; }
+        body { 
+            font-family: DejaVu Sans, sans-serif; 
+            width: auto; 
+            max-width: 100%; 
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: auto;
+            min-width: 100%;
+        }
         .header { text-align: center; margin-bottom: 20px; }
         .title { font-size: 18px; font-weight: bold; }
         .subtitle { font-size: 14px; margin-bottom: 10px; }

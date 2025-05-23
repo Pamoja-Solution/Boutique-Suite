@@ -39,12 +39,17 @@ class Vente extends Model
 
     private static function generateMatricule()
     {
-        $date = date('Ymd'); // Date au format YYYYMMDD
-        $randomString = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6)); // 6 caractères aléatoires
-    
-        return $date . '-' . $randomString;
+        $date = date('Ymd'); // Format: YYYYMMDD
+        $lastRecord = Vente::whereDate('created_at', today())->latest()->first();
+        
+        $counter = 1;
+        if ($lastRecord && preg_match('/\d{5}$/', $lastRecord->matricule)) {
+            $lastCounter = (int)substr($lastRecord->matricule, -5);
+            $counter = $lastCounter + 1;
+        }
+        
+        return $date . str_pad($counter, 5, '0', STR_PAD_LEFT);
     }
-
     public function scopeForCurrentUser(Builder $query): void
     {
         $query->where('user_id', Auth::user()->id);

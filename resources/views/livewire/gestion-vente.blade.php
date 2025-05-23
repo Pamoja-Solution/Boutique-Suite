@@ -1,7 +1,9 @@
 <div class="">
+    
     @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
     @include('gerant.nav')
     @endif
+    @section('titre','Station de Base')
     <div class="py-6 bg-base-100 min-h-screen rounded-box">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- En-tête -->
@@ -203,7 +205,7 @@
                                 <h4 class="font-medium text-base-content mb-2 mt-2">Articles ({{ count($this->selectedProduits) }})</h4>
                                 <div class="space-y-3">
                                     @foreach($panier as $prod)
-                                        <div class="card bg-base-100 shadow-sm">
+                                        <div class="card bg-base-100 shadow-sm" wire:key="panier-card-{{ $prod->id }}-{{ $loop->index }}">
                                             <div class="card-body p-4">
                                                 <div class="flex justify-between items-start">
                                                     <div>

@@ -1,5 +1,6 @@
 <x-app-layout>
     @include('gerant.nav')
+    @section("titre",'Création Inventaire')
 
     <div class="px-2 sm:px-3 lg:px-4 py-3">
         <h2 class="font-semibold text-xl  leading-tight">

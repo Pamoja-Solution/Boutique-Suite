@@ -58,6 +58,13 @@
                                 Produits
                             </a>
                         </li>
+
+                        <li>
+                            <a href="{{ route('gestion.codes-barres') }}" class="{{ request()->routeIs('gestion.codes-barres') ? 'active' : '' }}">
+                                <i class="fa-solid fa-barcode"></i>
+                                Code-Barre
+                            </a>
+                        </li>
                         <li>
                             <a href="{{ route('fournisseurs.index') }}" class="{{ request()->routeIs('fournisseurs.index') ? 'active' : '' }}">
                                 <i class="fas fa-truck"></i>
@@ -173,6 +180,11 @@
                         <i class="fas fa-box mr-3"></i>
                         {{ __('Produits') }}
                     </x-responsive-nav-link>
+                    <x-responsive-nav-link href="{{ route('gestion.codes-barres') }}" :active="request()->routeIs('gestion.codes-barres')">
+                        <i class="fa-solid fa-barcode"></i>
+                            Code-Barre
+                    </x-responsive-nav-link>
+                    
                     <x-responsive-nav-link href="{{ route('fournisseurs.index') }}" :active="request()->routeIs('fournisseurs.index')">
                         <i class="fas fa-truck mr-3"></i>
                         {{ __('Fournisseurs') }}
@@ -216,16 +228,19 @@
             <!-- Profil utilisateur -->
             <div class="border-t border-base-200 pt-3 mt-3">
                 <div class="flex items-center px-3 py-2">
-                    @if (Auth::user()->image)
-                        <div class="avatar mr-3">
-                            <div class="w-10 rounded-full">
-                                <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                    @auth
+                        @if (auth()->user()->image)
+                            <div class="avatar mr-3">
+                                <div class="w-10 rounded-full">
+                                    <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}" />
+                                </div>
                             </div>
-                        </div>
-                    @endif
+                        @endif
+                    @endauth
+
                     <div>
-                        <div class="font-bold">{{ Auth::user()->name }}</div>
-                        <div class="text-sm opacity-70">{{ Auth::user()->email }}</div>
+                        <div class="font-bold">{{ auth()->user()->name }}</div>
+                        <div class="text-sm opacity-70">{{ auth()->user()->email }}</div>
                     </div>
                 </div>
 

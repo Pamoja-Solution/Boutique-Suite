@@ -1,5 +1,7 @@
 <div>
     @include('gerant.nav')
+    @section("titre","Statistiques Générales")
+
     <div class="p-4 min-h-screen">
         <h1 class="text-2xl font-bold mb-6">Statistiques des Vendeurs</h1>
         
@@ -228,7 +230,7 @@
                                                                 Détails
                                                             </button>
                                                             <button 
-                                                                wire:click="printInvoice({{ $sale->id }})" 
+                                                                 onclick="window.open('{{ route('ventes.print-invoice', ['vente' => $sale->id]) }}', '_blank')"
                                                                 class="btn btn-sm btn-secondary"
                                                             >
                                                                 Imprimer
@@ -376,7 +378,7 @@
                     
                     <div class="modal-action">
                         <button wire:click="hideDetails" class="btn">Fermer</button>
-                        <button wire:click="printInvoice({{ $selectedSale->id }})" class="btn btn-primary">
+                        <button  onclick="window.open('{{ route('ventes.print-invoice', ['vente' => $selectedSale->id]) }}', '_blank')" class="btn btn-primary">
                             Imprimer la facture
                         </button>
                     </div>

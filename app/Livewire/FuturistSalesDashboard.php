@@ -163,13 +163,9 @@ public $pdfOrientation = 'portrait';
             'logo' => public_path($logoPath)
         ];
         
-        $pdf = Pdf::loadView('pdf.invoice2', compact('vente', 'entreprise'))
-            ->setPaper([0, 0, 226.77, 425.19]);
-
-        return response()->streamDownload(
-            fn () => print($pdf->output()), 
-            "facture_{$saleId}.pdf"
-        );
+        
+        return to_route("ventes.print-invoice",['vente'=>$vente]);
+        
     }
 
     public function sendEmail($saleId)
