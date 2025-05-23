@@ -8,7 +8,7 @@
             <!-- Liens desktop -->
             <div class="hidden sm:flex gap-1 ml-4">
                 <!-- Lien Client -->
-                <x-nav-link href="{{ route('clients.index') }}" :active="request()->routeIs('clients.index')">
+                <x-nav-link href="{{ route('clients.index') }}" :active="request()->routeIs('clients.index')" wire:navigate >
                     <i class="fas fa-users mr-2"></i>
                     {{ __('Clients') }}
                 </x-nav-link>
