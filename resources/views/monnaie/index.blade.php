@@ -83,10 +83,10 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        <a href="{{route('monnaie.edit', $item->id)}}" class="text-blue-600 hover:text-blue-900 mr-4">
+                                        <a href="{{route('monnaie.edit', $item->id)}}" class="text-blue-600 hover:text-blue-900 mr-4"  wire:navigate>
                                             <i class="fas fa-edit mr-1"></i> Modifier
                                         </a>
-                                        <a href="{{route('monnaie.active', $item->id)}}" class="text-blue-600 hover:text-blue-900">
+                                        <a href="{{route('monnaie.active', $item->id)}}" class="text-blue-600 hover:text-blue-900" wire:navigate>
                                             <i class="fas fa-money-check-alt mr-1"></i> 
                                             @if($item->statut)
                                             Desactiver
@@ -103,7 +103,7 @@
                                             <img src="{{ asset('app-assets/images/picto_landlord_search.png') }}" class="h-24 mb-4" alt="Aucun résultat">
                                             <h4 class="text-lg font-medium text-gray-900 mb-2">Il n'y a rien par ici...</h4>
                                             <p class="text-gray-500 mb-4">Cette page permet de gérer les monnaies.</p>
-                                            <a href="#" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                                            <a href="#" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" wire:navigate>
                                                 Ajouter la devise
                                             </a>
                                         </div>

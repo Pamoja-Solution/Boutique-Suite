@@ -21,26 +21,26 @@
                     @auth
                         @if (auth()->user()->isVendeur() )
                             <a href="{{ route('dashboard') }}"
-                            class="inline-block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition">
+                            class="inline-block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition" wire:navigate>
                             Accéder au Dashboard
                             </a>
                         @endif
                         @if (auth()->user()->isGerant() )
                             <a href="{{ route('gerant.dashboard') }}"
-                            class="inline-block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition">
+                            class="inline-block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition" wire:navigate>
                             Accéder au Dashboard
                             </a>
                         @endif
                         
                     @else
                         <a href="{{ route('login') }}"
-                            class="inline-block w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition">
+                            class="inline-block w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition" wire:navigate>
                             Se connecter
                         </a>
 
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}"
-                                class="inline-block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-lg transition">
+                                class="inline-block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-lg transition" wire:navigate>
                                 S'inscrire
                             </a>
                         @endif

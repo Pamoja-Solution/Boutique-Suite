@@ -14,30 +14,30 @@
                 </x-nav-link>
 
                 <!-- Lien Dépenses -->
-                <x-nav-link href="{{ route('depenses') }}" :active="request()->routeIs('depenses')">
+                <x-nav-link href="{{ route('depenses') }}" :active="request()->routeIs('depenses')" wire:navigate >
                     <i class="fas fa-receipt mr-2"></i>
                     {{ __('Dépenses') }}
                 </x-nav-link>
-                <x-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
+                <x-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')" wire:navigate >
                     <i class="fas fa-cash-register mr-2"></i>
                     {{ __('Ventes') }}
                 </x-nav-link>
 
                 @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
                 <!-- Menu Admin -->
-                <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
+                <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')" wire:navigate >
                     <i class="fas fa-user-cog mr-2"></i>
                     {{ __('Utilisateurs') }}
                 </x-nav-link>
                 
-                <x-nav-link href="{{ route('achats.index') }}" :active="request()->routeIs('achats.index')">
+                <x-nav-link href="{{ route('achats.index') }}" :active="request()->routeIs('achats.index')" wire:navigate >
                     <i class="fas fa-boxes mr-2"></i>
                     {{ __('Stock') }}
                 </x-nav-link>
                 
                 
                 
-                <x-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')">
+                <x-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')" wire:navigate >
                     <i class="fas fa-sitemap mr-2"></i>
                     {{ __('Rayons') }}
                 </x-nav-link>
@@ -53,20 +53,20 @@
                     </label>
                     <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 border border-base-200">
                         <li>
-                            <a href="{{ route('produits.index') }}" class="{{ request()->routeIs('produits.index') ? 'active' : '' }}">
+                            <a href="{{ route('produits.index') }}" class="{{ request()->routeIs('produits.index') ? 'active' : '' }}" wire:navigate >
                                 <i class="fas fa-box"></i>
                                 Produits
                             </a>
                         </li>
 
                         <li>
-                            <a href="{{ route('gestion.codes-barres') }}" class="{{ request()->routeIs('gestion.codes-barres') ? 'active' : '' }}">
+                            <a href="{{ route('gestion.codes-barres') }}" class="{{ request()->routeIs('gestion.codes-barres') ? 'active' : '' }}" wire:navigate >
                                 <i class="fa-solid fa-barcode"></i>
                                 Code-Barre
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('fournisseurs.index') }}" class="{{ request()->routeIs('fournisseurs.index') ? 'active' : '' }}">
+                            <a href="{{ route('fournisseurs.index') }}" class="{{ request()->routeIs('fournisseurs.index') ? 'active' : '' }}" wire:navigate >
                                 <i class="fas fa-truck"></i>
                                 Fournisseurs
                             </a>
@@ -85,31 +85,31 @@
                     </label>
                     <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 border border-base-200">
                         <li>
-                            <a href="{{route('monnaie.index')}}">
+                            <a href="{{route('monnaie.index')}}" wire:navigate >
                                 <i class="fas fa-coins"></i>
                                 Monnaie
                             </a>
                         </li>
                         <li>
-                            <a href="{{route('taux')}}">
+                            <a href="{{route('taux')}}" wire:navigate >
                                 <i class="fas fa-exchange-alt"></i>
                                 Taux
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('user.statistics') }}">
+                            <a href="{{ route('user.statistics') }}" wire:navigate >
                                 <i class="fas fa-chart-line"></i>
                                 Statistiques
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('inventaires.index') }}">
+                            <a href="{{ route('inventaires.index') }}" wire:navigate >
                                 <i class="fa-solid fa-tags"></i>
                                 Inventaires
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('rapports') }}">
+                            <a href="{{ route('rapports') }}" wire:navigate >
                                 <i class="fas fa-chart-line"></i>
                                 Rapport
                             </a>
@@ -135,35 +135,35 @@
     <div x-show="open" x-transition.opacity class="sm:hidden">
         <div class="px-2 pt-2 pb-4 space-y-1 bg-base-100 shadow-lg">
             <!-- Liens principaux -->
-            <x-responsive-nav-link href="{{ route('clients.index') }}" :active="request()->routeIs('clients.index')">
+            <x-responsive-nav-link href="{{ route('clients.index') }}" :active="request()->routeIs('clients.index')" wire:navigate >
                 <i class="fas fa-users mr-3"></i>
                 {{ __('Clients') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('depenses') }}" :active="request()->routeIs('depenses')">
+            <x-responsive-nav-link href="{{ route('depenses') }}" :active="request()->routeIs('depenses')" wire:navigate >
                 <i class="fas fa-receipt mr-3"></i>
                 {{ __('Dépenses') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')">
+            <x-responsive-nav-link href="{{ route('vente.produits') }}" :active="request()->routeIs('vente.produits')" wire:navigate >
                 <i class="fas fa-cash-register mr-3"></i>
                 {{ __('Ventes') }}
             </x-responsive-nav-link>
             @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
             <!-- Menu Admin -->
-            <x-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
+            <x-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')" wire:navigate >
                 <i class="fas fa-user-cog mr-3"></i>
                 {{ __('Utilisateurs') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ route('achats.index') }}" :active="request()->routeIs('achats.index')">
+            <x-responsive-nav-link href="{{ route('achats.index') }}" :active="request()->routeIs('achats.index')" wire:navigate >
                 <i class="fas fa-boxes mr-3"></i>
                 {{ __('Stock') }}
             </x-responsive-nav-link>
 
             
 
-            <x-responsive-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')">
+            <x-responsive-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')" wire:navigate >
                 <i class="fas fa-sitemap mr-3"></i>
                 {{ __('Rayons') }}
             </x-responsive-nav-link>
@@ -176,16 +176,16 @@
                     Produits
                 </div>
                 <div class="collapse-content"> 
-                    <x-responsive-nav-link href="{{ route('produits.index') }}" :active="request()->routeIs('produits.index')">
+                    <x-responsive-nav-link href="{{ route('produits.index') }}" :active="request()->routeIs('produits.index')" wire:navigate >
                         <i class="fas fa-box mr-3"></i>
                         {{ __('Produits') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link href="{{ route('gestion.codes-barres') }}" :active="request()->routeIs('gestion.codes-barres')">
+                    <x-responsive-nav-link href="{{ route('gestion.codes-barres') }}" :active="request()->routeIs('gestion.codes-barres')" wire:navigate >
                         <i class="fa-solid fa-barcode"></i>
                             Code-Barre
                     </x-responsive-nav-link>
                     
-                    <x-responsive-nav-link href="{{ route('fournisseurs.index') }}" :active="request()->routeIs('fournisseurs.index')">
+                    <x-responsive-nav-link href="{{ route('fournisseurs.index') }}" :active="request()->routeIs('fournisseurs.index')" wire:navigate >
                         <i class="fas fa-truck mr-3"></i>
                         {{ __('Fournisseurs') }}
                     </x-responsive-nav-link>
@@ -200,24 +200,24 @@
                     Paramètres
                 </div>
                 <div class="collapse-content">
-                    <x-responsive-nav-link href="{{route('monnaie.index')}}">
+                    <x-responsive-nav-link href="{{route('monnaie.index')}}" wire:navigate >
                         <i class="fas fa-coins mr-3"></i>
                         Monnaie
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link href="{{route('taux')}}">
+                    <x-responsive-nav-link href="{{route('taux')}}" wire:navigate >
                         <i class="fas fa-exchange-alt mr-3"></i>
                         Taux
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link href="{{ route('user.statistics') }}">
+                    <x-responsive-nav-link href="{{ route('user.statistics') }}" wire:navigate >
                         <i class="fas fa-chart-line mr-3"></i>
                         Statistiques
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link href="{{ route('inventaires.index') }}">
+                    <x-responsive-nav-link href="{{ route('inventaires.index') }}" wire:navigate >
                             <i class="fa-solid fa-tags"></i>
                             Inventaires
                     </x-responsive-nav-link>
 
-                    <x-responsive-nav-link href="{{ route('rapports') }}">
+                    <x-responsive-nav-link href="{{ route('rapports') }}" wire:navigate >
                         <i class="fas fa-chart-line mr-3"></i>
                         Rapports
                     </x-responsive-nav-link>
@@ -244,13 +244,13 @@
                     </div>
                 </div>
 
-                <x-responsive-nav-link href="{{ route('profile') }}" class="mt-1">
+                <x-responsive-nav-link href="{{ route('profile') }}" class="mt-1" wire:navigate >
                     <i class="fas fa-user-edit mr-3"></i>
                     {{ __('Profil') }}
                 </x-responsive-nav-link>
 
                 <button wire:click="logout" class="w-full text-start">
-                    <x-responsive-nav-link>
+                    <x-responsive-nav-link wire:navigate >
                         <i class="fas fa-sign-out-alt mr-3"></i>
                         {{ __('Déconnexion') }}
                     </x-responsive-nav-link>

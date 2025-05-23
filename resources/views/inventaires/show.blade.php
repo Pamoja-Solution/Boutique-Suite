@@ -33,15 +33,15 @@
                             </div>
                             
                             <div class="flex gap-2 mt-4 md:mt-0">
-                                <a href="{{ route('inventaires.index') }}" class="btn btn-ghost">
+                                <a href="{{ route('inventaires.index') }}" class="btn btn-ghost" wire:navigate>
                                     <i class="fas fa-arrow-left mr-2"></i> Retour
                                 </a>
                                 @if($inventaire->statut !== 'terminé')
-                                <a href="{{ route('inventaires.edit', $inventaire->id) }}" class="btn btn-warning">
+                                <a href="{{ route('inventaires.edit', $inventaire->id) }}" class="btn btn-warning" wire:navigate>
                                     <i class="fas fa-edit mr-2"></i> Modifier
                                 </a>
                                 @if($inventaire->statut === 'brouillon' || $inventaire->statut === 'en_cours')
-                                <a href="{{ route('inventaires.mouvements', $inventaire->id) }}" class="btn btn-primary">
+                                <a href="{{ route('inventaires.mouvements', $inventaire->id) }}" class="btn btn-primary" wire:navigate>
                                     <i class="fas fa-list mr-2"></i> Mouvements
                                 </a>
                                 @endif

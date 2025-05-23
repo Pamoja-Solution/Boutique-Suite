@@ -14,7 +14,7 @@
 
                     
                     <div class="flex flex-wrap gap-2">
-                        <a href="{{ route('vendeur.stat') }}" class="btn btn-outline">
+                        <a href="{{ route('vendeur.stat') }}" class="btn btn-outline" wire:navigate>
                             <svg class="w-5 h-5 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15v4m6-6v6m6-4v4m6-6v6M3 11l6-5 6 5 5.5-5.5"/>
                             </svg>
@@ -22,7 +22,7 @@
                         </a>
                         
                         @if (auth()->user()->isGerant() || auth()->user()->isSuperviseur())
-                        <a href="{{ route('stats') }}" class="btn btn-outline">
+                        <a href="{{ route('stats') }}" class="btn btn-outline" wire:navigate>
                             <svg class="w-5 h-5 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15v4m6-6v6m6-4v4m6-6v6M3 11l6-5 6 5 5.5-5.5"/>
                             </svg>

@@ -26,7 +26,7 @@
         </div>
         
         <div>
-            <a href="{{ route('inventaires.create') }}" class="btn btn-primary">
+            <a href="{{ route('inventaires.create') }}" class="btn btn-primary" wire:navigate>
                 <i class="fas fa-plus mr-2"></i> Nouvel inventaire
             </a>
         </div>
@@ -68,15 +68,15 @@
                     <td>{{ $inventaire->user->name }}</td>
                     <td>{{ $inventaire->created_at->format('d/m/Y H:i') }}</td>
                     <td class="flex gap-2">
-                        <a href="{{ route('inventaires.show', $inventaire->id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('inventaires.show', $inventaire->id) }}" class="btn btn-sm btn-info" wire:navigate>
                             <i class="fas fa-eye"></i>
                         </a>
                         @if($inventaire->statut !== 'terminé')
-                        <a href="{{ route('inventaires.edit', $inventaire->id) }}" class="btn btn-sm btn-warning">
+                        <a href="{{ route('inventaires.edit', $inventaire->id) }}" class="btn btn-sm btn-warning" wire:navigate>
                             <i class="fas fa-edit"></i>
                         </a>
                         @if($inventaire->statut === 'brouillon' || $inventaire->statut === 'en_cours')
-                        <a href="{{ route('inventaires.mouvements', $inventaire->id) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ route('inventaires.mouvements', $inventaire->id) }}" class="btn btn-sm btn-primary" wire:navigate>
                             <i class="fas fa-list"></i>
                         </a>
                         @endif

@@ -104,11 +104,11 @@
                                         </div>
                                         <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                                             @if(!$produit->code_barre)
-                                                <li><a wire:click="generateCodeBarre({{ $produit->id }})">Générer code-barres</a></li>
+                                                <li><a wire:click="generateCodeBarre({{ $produit->id }})" wire:navigate >Générer code-barres</a></li>
                                             @endif
-                                            <li><a wire:click="editCodeBarre({{ $produit->id }})">Modifier code-barres</a></li>
+                                            <li><a wire:click="editCodeBarre({{ $produit->id }})" wire:navigate >Modifier code-barres</a></li>
                                             @if($produit->code_barre)
-                                                <li><a wire:click="printSingle({{ $produit->id }})">Imprimer PDF</a></li>
+                                                <li><a wire:click="printSingle({{ $produit->id }})" wire:navigate >Imprimer PDF</a></li>
                                             @endif
                                         </ul>
                                     </div>

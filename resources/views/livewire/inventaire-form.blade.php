@@ -43,7 +43,7 @@
             </div>
             
             <div class="card-actions justify-end mt-4">
-                <a href="{{ route('inventaires.index') }}" class="btn btn-ghost">Annuler</a>
+                <a href="{{ route('inventaires.index') }}" class="btn btn-ghost" wire:navigate>Annuler</a>
                 @if(!$isTermine)
                 <button type="submit" class="btn btn-primary">Enregistrer</button>
                 @endif

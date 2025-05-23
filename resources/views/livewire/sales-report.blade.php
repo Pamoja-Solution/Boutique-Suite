@@ -360,7 +360,7 @@
                     <div class="modal-action bg-base-200 p-4">
                         <a href="{{ route('ventes.print-invoice', $selectedSale->id ?? '') }}" 
                            target="_blank"
-                           class="btn btn-info">
+                           class="btn btn-info" wire:navigate >
                             <i class="fas fa-print mr-2"></i> Imprimer
                         </a>
                         <button wire:click="sendEmail({{ $selectedSale->id ?? '' }})" class="btn btn-success">
