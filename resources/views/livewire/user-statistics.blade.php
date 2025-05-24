@@ -335,7 +335,7 @@
                 <div class="modal-box max-w-4xl"  @if($selectedSale) id="modal-{{ $selectedSale->id }}" @endif>
                     <h3 class="font-bold text-lg">Détails de la vente #{{ $selectedSale->id }}</h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class=" mt-4">
                         <div>
                             <h4 class="font-semibold">Informations générales</h4>
                             <div class="space-y-2 mt-2">

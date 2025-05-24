@@ -13,6 +13,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
+use Maatwebsite\Excel\Facades\Excel;
 
 #[Layout('layouts.app')]
 
@@ -36,7 +37,7 @@ class SalesReport extends Component
     public $exportType = 'pdf';
     public $pdfOrientation = 'portrait';
     public $includeCharts = true;
-    public $includeDetails = true;
+    public $includeDetails = false;
     public $showDetailsModal = false;
     public $selectedSale = null;
     
@@ -52,6 +53,9 @@ class SalesReport extends Component
         return User::orderBy('name')->get();
     }
 
+    public function sendEmail(){
+        
+    }
     #[Computed]
     public function sales()
     {
@@ -199,14 +203,7 @@ public function salesBySeller()
         ->orderBy('created_at', 'desc')
         ->get();
 
-    // Calculer la largeur nécessaire en fonction du contenu
-    $baseWidth = 100; // Largeur de base en mm
-    $perColumnWidth = 20; // Largeur supplémentaire par colonne si nécessaire
-    $calculatedWidth = $baseWidth + (count($sales) * $perColumnWidth); // Exemple de calcul
     
-    // Dimensions en points (1 mm = 2.83 points)
-    $heightInPoints = 800 * 2.83; // 80 cm en points
-    $widthInPoints = $calculatedWidth * 2.83; // Largeur calculée en points
 
     $pdf = Pdf::loadView('exports.sales2-pdf', [
         'sales' => $sales,
@@ -217,16 +214,16 @@ public function salesBySeller()
         'salesSummary' => $this->salesSummary,
         'salesBySeller' => $this->salesBySeller,
         'includeCharts' => $this->includeCharts,
-        'includeDetails' => $this->includeDetails,        'orientation' => $this->pdfOrientation, // Assurez-vous que cette ligne est présente
+        'includeDetails' => $this->includeDetails,        
 
     ]);
 
     // Définir le format personnalisé
-    $pdf->setPaper([0, 0, $widthInPoints, $heightInPoints], 'portrait')
-        ->setOption('margin-top', 0)
+    $pdf->setPaper([0, 0, 226.77, 1000], 'portrait') // 80mm = 226.77 points        ->setOption('margin-top', 0)
         ->setOption('margin-bottom', 0)
         ->setOption('margin-left', 0)
-        ->setOption('margin-right', 0);
+        ->setOption('margin-right', 0)->setOption('margin-right', 2)
+        ->setOption('disable-smart-shrinking', true);
 
     $filename = match($this->reportType) {
         'daily' => 'rapport-journalier-' . Carbon::parse($this->startDate)->format('Y-m-d'),
@@ -246,35 +243,36 @@ public function salesBySeller()
         $filename
     );
 }
-    public function exportToExcel()
-    {
-        $this->validate([
-            'startDate' => 'required|date',
-            'endDate' => $this->reportType === 'custom' ? 'required|date|after_or_equal:startDate' : 'nullable',
-        ]);
+public function exportToExcel()
+{
+    $this->validate([
+        'startDate' => 'required|date',
+        'endDate' => $this->reportType === 'custom' ? 'required|date|after_or_equal:startDate' : 'nullable',
+    ]);
 
-        $export = new SalesExport(
-            startDate: $this->startDate,
-            endDate: $this->reportType === 'custom' ? $this->endDate : $this->startDate,
-            reportType: $this->reportType,
-            userId: $this->selectedUserId !== 'all' ? $this->selectedUserId : null
-        );
+    $export = new SalesExport(
+        startDate: $this->startDate,
+        endDate: $this->reportType === 'custom' ? $this->endDate : $this->startDate,
+        reportType: $this->reportType,
+        userId: $this->selectedUserId !== 'all' ? $this->selectedUserId : null
+    );
 
-        $filename = match($this->reportType) {
-            'daily' => 'rapport-journalier-' . Carbon::parse($this->startDate)->format('Y-m-d'),
-            'monthly' => 'rapport-mensuel-' . Carbon::parse($this->startDate)->format('Y-m'),
-            'custom' => 'rapport-personnalise-' . Carbon::parse($this->startDate)->format('Y-m-d') . '-a-' . Carbon::parse($this->endDate)->format('Y-m-d'),
-        };
+    $filename = match($this->reportType) {
+        'daily' => 'rapport-journalier-' . Carbon::parse($this->startDate)->format('Y-m-d'),
+        'monthly' => 'rapport-mensuel-' . Carbon::parse($this->startDate)->format('Y-m'),
+        'custom' => 'rapport-personnalise-' . Carbon::parse($this->startDate)->format('Y-m-d') . '-a-' . Carbon::parse($this->endDate)->format('Y-m-d'),
+    };
 
-        if ($this->selectedUserId !== 'all') {
-            $user = User::find($this->selectedUserId);
-            $filename .= '-vendeur-' . Str::slug($user->name);
-        }
-
-        $filename .= '.xlsx';
-
-        return $export->download($filename);
+    if ($this->selectedUserId !== 'all') {
+        $user = User::find($this->selectedUserId);
+        $filename .= '-vendeur-' . Str::slug($user->name);
     }
+
+    $filename .= '.xlsx';
+
+    // Utilisation de Excel::download() au lieu de $export->download()
+    return Excel::download($export, $filename);
+}
 
     public function render()
     {

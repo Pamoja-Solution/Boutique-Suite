@@ -208,7 +208,7 @@
                             <label class="label">
                                 <span class="label-text">Format d'export</span>
                             </label>
-                            <select class="select select-bordered w-full" wire:model="exportType">
+                            <select class="select select-bordered w-full" wire:model.live="exportType">
                                 <option value="pdf">PDF</option>
                                 <option value="excel">Excel</option>
                             </select>
@@ -219,19 +219,11 @@
                             
                             <div class="form-control">
                                 <label class="label cursor-pointer justify-start gap-4">
-                                    <input type="checkbox" class="checkbox" wire:model="includeDetails" checked />
+                                    <input type="checkbox" class="checkbox" wire:model="includeDetails"  />
                                     <span class="label-text">Inclure les détails des ventes</span>
                                 </label>
                             </div>
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text">Orientation</span>
-                                </label>
-                                <select class="select select-bordered" wire:model="pdfOrientation">
-                                    <option value="portrait">Portrait</option>
-                                    <option value="landscape">Paysage</option>
-                                </select>
-                            </div>
+                            
                         </div>
                         @endif
                     </div>
@@ -360,7 +352,7 @@
                     <div class="modal-action bg-base-200 p-4">
                         <a href="{{ route('ventes.print-invoice', $selectedSale->id ?? '') }}" 
                            target="_blank"
-                           class="btn btn-info" wire:navigate >
+                           class="btn btn-info"  >
                             <i class="fas fa-print mr-2"></i> Imprimer
                         </a>
                         <button wire:click="sendEmail({{ $selectedSale->id ?? '' }})" class="btn btn-success">

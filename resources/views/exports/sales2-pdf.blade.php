@@ -4,112 +4,129 @@
     <meta charset="utf-8">
     <title>Rapport des ventes</title>
     <style>
-        body { 
-            font-family: DejaVu Sans, sans-serif; 
-            width: auto; 
-            max-width: 100%; 
+        @page { 
             margin: 0;
             padding: 0;
+            size: 80mm auto;
         }
-        .container {
-            width: auto;
-            min-width: 100%;
+        
+        body {
+            font-family: 'Courier New', monospace;
+            width: 80mm;
+            margin: 0 auto;
+            padding: 2mm;
+            font-size: 10px;
+            line-height: 1.2;
         }
-        .header { text-align: center; margin-bottom: 20px; }
-        .title { font-size: 18px; font-weight: bold; }
-        .subtitle { font-size: 14px; margin-bottom: 10px; }
-        .table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .table th, .table td { border: 1px solid #ddd; padding: 8px; }
-        .table th { background-color: #f2f2f2; text-align: left; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .summary { margin-bottom: 20px; }
-        .page-break { page-break-after: always; }
-        .seller-performance { margin-top: 20px; }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3mm;
+            padding-bottom: 2mm;
+            border-bottom: 1px dashed #000;
+        }
+        
+        .title {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 1mm;
+        }
+        
+        .subtitle {
+            font-size: 9px;
+            margin-bottom: 1mm;
+        }
+        
+        .table {
+            width: 90%;
+            border-collapse: collapse;
+            font-size: 9px;
+            margin: 2mm 0;
+        }
+        
+        .table th {
+            text-align: left;
+            padding: 1mm 0;
+            border-bottom: 1px solid #000;
+        }
+        
+        .table td {
+            padding: 1mm 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 3mm 0;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="title">Rapport des ventes</div>
+        <div class="title">RAPPORT DES VENTES</div>
         <div class="subtitle">
             @if($reportType === 'daily')
-                Pour le {{ Carbon\Carbon::parse($startDate)->format('d/m/Y') }}
+                DATE: {{ Carbon\Carbon::parse($startDate)->format('d/m/Y') }}
             @elseif($reportType === 'monthly')
-                Pour {{ Carbon\Carbon::parse($startDate)->translatedFormat('F Y') }}
+                MOIS: {{ Carbon\Carbon::parse($startDate)->translatedFormat('F Y') }}
             @else
-                Du {{ Carbon\Carbon::parse($startDate)->format('d/m/Y') }} au {{ Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
+                PERIODE: {{ Carbon\Carbon::parse($startDate)->format('d/m/Y') }} - {{ Carbon\Carbon::parse($endDate)->format('d/m/Y') }}
             @endif
         </div>
         @if($selectedUser)
-            <div class="subtitle">Vendeur: {{ $selectedUser->name }}</div>
+            <div class="subtitle">VENDEUR: {{ $selectedUser->name }}</div>
         @endif
     </div>
 
-    <div class="summary">
-        <table class="table">
-            <tr>
-                <th>Total des ventes</th>
-                <td class="text-right">{{ number_format($salesSummary, 2) }} FC</td>
-            </tr>
-            <tr>
-                <th>Nombre de ventes</th>
-                <td class="text-right">{{ $sales->count() }}</td>
-            </tr>
-        </table>
-    </div>
+    <table class="table">
+        <tr>
+            <td><strong>TOTAL VENTES</strong></td>
+            <td class="text-right">{{ number_format($salesSummary, 2) }} FC</td>
+        </tr>
+        <tr>
+            <td><strong>NOMBRE VENTES</strong></td>
+            <td class="text-right">{{ $sales->count() }}</td>
+        </tr>
+    </table>
 
     @if($includeCharts && $selectedUser === null && $salesBySeller->isNotEmpty())
-        <div class="seller-performance">
-            <h3>Performance par vendeur</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Vendeur</th>
-                        <th class="text-right">Nombre de ventes</th>
-                        <th class="text-right">Total des ventes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($salesBySeller as $seller)
-                        <tr>
-                            <td>{{ $seller['name'] }}</td>
-                            <td class="text-right">{{ $seller['sales_count'] }}</td>
-                            <td class="text-right">{{ number_format($seller['total'], 2) }} FC</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        <div class="divider"></div>
+        <div class="text-center"><strong>PERF. PAR VENDEUR</strong></div>
+        <table class="table">
+            @foreach($salesBySeller as $seller)
+                <tr>
+                    <td>{{ Str::limit($seller['name'], 15) }}</td>
+                    <td class="text-right">{{ $seller['sales_count'] }}</td>
+                    <td class="text-right">{{ number_format($seller['total'], 2) }} FC</td>
+                </tr>
+            @endforeach
+        </table>
     @endif
 
     @if($includeDetails)
-        @if($orientation === 'landscape')
-            <div class="page-break"></div>
-        @endif
-
-        <h3>Détail des ventes</h3>
+        <div class="divider"></div>
+        <div class="text-center"><strong>DETAIL DES VENTES</strong></div>
         <table class="table">
-            <thead>
+            @foreach($sales as $sale)
                 <tr>
-                    <th>Date</th>
-                    <th>N° Vente</th>
-                    <th>Client</th>
-                    <th>Vendeur</th>
-                    <th class="text-right">Montant</th>
+                    <td>{{ $sale->created_at->format('d/m H:i') }}</td>
+                    <td>{{ $sale->matricule }}</td>
+                    <td class="text-right">{{ number_format($sale->total, 2) }} FC</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($sales as $sale)
-                    <tr>
-                        <td>{{ $sale->created_at->format('d/m/Y H:i') }}</td>
-                        <td>{{ $sale->matricule }}</td>
-                        <td>{{ $sale->client->nom }}</td>
-                        <td>{{ $sale->user->name }}</td>
-                        <td class="text-right">{{ number_format($sale->total, 2) }} FC</td>
-                    </tr>
-                @endforeach
-            </tbody>
+            @endforeach
         </table>
     @endif
+
+    <div class="divider"></div>
+    <div class="text-center">*** MERCI ***</div>
+
 </body>
 </html>
