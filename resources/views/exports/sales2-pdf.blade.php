@@ -11,11 +11,11 @@
         }
         
         body {
-            font-family: 'Courier New', monospace;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
             width: 80mm;
             margin: 0 auto;
             padding: 2mm;
-            font-size: 10px;
+            font-size: 11px;
             line-height: 1.2;
         }
         
