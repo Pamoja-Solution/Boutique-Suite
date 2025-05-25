@@ -32,6 +32,7 @@ use App\Livewire\LesVentes;
 use App\Livewire\MonnaieManager;
 use App\Livewire\SalesReport;
 use App\Livewire\TauxChangeManager;
+use App\Models\Monnaie;
 
 Route::view('/', 'welcome');
 
@@ -118,7 +119,7 @@ Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
             'nom' => config('app.name'),
             'adresse' => config('app.adresse'),
             'telephone' => config('app.telephone'),
-            'email' => config('app.email'),
+            'rccm' => config('app.rccm'),
             'site_web' => config('app.url'),
             'logo' => public_path(config('app.logo'))
         ];
@@ -131,8 +132,9 @@ Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
         // Conversion mm en points (1mm = 2.83 points)
         $widthInPoints = 80 * 2.83;  // 80mm en points
         $heightInPoints = $totalHeight * 2.83;
-    
-        $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise'))
+        $monnaie= Monnaie::where('code', 'USD')->first();
+        
+        $pdf = Pdf::loadView('pdf.invoice2', compact('vente','entreprise','monnaie'))
                 ->setPaper([0, 0, $widthInPoints, $heightInPoints], 'portrait')
                 ->setOption('margin-top', 0)
                 ->setOption('margin-bottom', 0)

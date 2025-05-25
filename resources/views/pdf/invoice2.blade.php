@@ -159,10 +159,11 @@
     <div class="header">
         <h1>{{ $entreprise['nom'] }}</h1>
         <p>{{ $entreprise['adresse'] }}</p>
-        <p>Tél: {{ $entreprise['telephone'] }} • {{ $entreprise['email'] }}</p>
-        <p>Site web: 
-            <a href="{{ $entreprise['site_web'] }}" target="_blank" rel="noopener noreferrer">{{ $entreprise['site_web'] }}</a>
+        <p>Tél: {{ $entreprise['telephone'] }} </p>
+        <p style="font-weight: bold">
+            {{ $entreprise['rccm'] }}
         </p>
+        <p style="font-weight: bold">FACTURE DE VENTE</p>
     </div>
 
     <div class="info-block">
@@ -225,6 +226,7 @@
         <tr>
             <td class="bold">TOTAL GÉNÉRAL :</td>
             <td class="text-right bold">{{ number_format($vente->total, 2) }} FC</td>
+            
         </tr>
        
     </table>
@@ -236,9 +238,9 @@
         <p>{{ date('d/m/Y H:i') }}</p>
         <div class="barcode-container" style="text-align: center; margin: 15px 0;">
             <!-- Code-barre image -->
-            <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($vente->matricule, 'C128') }}" 
+            <!--img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($vente->matricule, 'C128') }}" 
                  alt="Code-barre {{ $vente->matricule }}"
-                 style="height: 25px; width: auto; max-width: 100%; image-rendering: crisp-edges;">
+                 style="height: 25px; width: auto; max-width: 100%; image-rendering: crisp-edges;"-->
             
             <!-- Numéro de matricule -->
             <div class="barcode-number" style="
@@ -350,7 +352,7 @@
         <div class="header">
             <h1>{{ $entreprise['nom'] }}</h1>
             <p>{{ $entreprise['adresse'] }}</p>
-            <p>Tél: {{ $entreprise['telephone'] }} • {{ $entreprise['email'] }}</p>
+            <p>Tél: {{ $entreprise['telephone'] }} </p>
             <p>Site web: 
                 <a href="{{ $entreprise['site_web'] }}" target="_blank" rel="noopener noreferrer">{{ $entreprise['site_web'] }}</a>
             </p>

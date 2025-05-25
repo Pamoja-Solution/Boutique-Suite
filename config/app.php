@@ -12,11 +12,11 @@ return [
     | other UI elements where an application name needs to be displayed.
     |
     */
-    'name' => env('APP_NAME', 'Boutiques Pour Tous'),
+    'name' => env('APP_NAME', 'ETS DANICHOUX'),
     "logo"=>"/images/default-avatar.png",
-    "adresse"=>'Kinshasa, Av; INSKD N23, Q.LDEIE, C.MONT - DEDEED',
-            'telephone' => "09736534536",
-            'email' =>  'contact@example.com',
+    "adresse"=>"VENTE PRODUITS ALIMENTAIRES ET DIVERS \n ROUTE MATADI N:1 C/NGALIEMA \n EN FACE DE WENZE BADIADINGI \n COMPLEXE SCOLAIRE CHANDELIER ",
+            'telephone' => "0816869617",
+            'rccm' =>  'RCCM : CD/KNM/RCCM20-A 01758',
 
     #'name' => env('APP_NAME', 'Laravel'),
 
