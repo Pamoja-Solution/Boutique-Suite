@@ -9,7 +9,7 @@
             font-family: 'DejaVu Sans', Arial, sans-serif; 
             font-size: 9px;
             margin: 0;
-            padding: 5mm;
+            padding: 2mm;
         }
         .header { 
             text-align: center; 
@@ -207,9 +207,9 @@
                     {{ \Str::limit($detail->produit->nom ,20)}}<br>
                 </td>
                 <td class="td">
-                    {{ number_format($detail->prix_unitaire, 0) }} 
+                    {{ number_format($detail->prix_unitaire, 0, '.', ' ') }} 
                 </td>
-                <td class="text-right td">{{ number_format($detail->quantite * $detail->prix_unitaire, 1) }} </td>
+                <td class="text-right td">{{ number_format($detail->quantite * $detail->prix_unitaire, 1, '.', ' ') }} </td>
             </tr>
             @endforeach
         </tbody>
@@ -228,6 +228,12 @@
             <td class="text-right bold">{{ number_format($vente->total, 2) }} FC</td>
             
         </tr>
+        @if ($monnaie)
+                                    <div class="mt-2 text-sm font-bold text-base-content/70">
+                                        DOLLAR: <span class="bold">{{ number_format($vente->total / $monnaie->taux_change, 2) }}{{ $monnaie->symbole}}</span>
+                                    </div>
+                                    
+                                @endif
        
     </table>
     {{ ucfirst(\App\Helpers\NumberToWordsHelper::toWordsWithDecimals($vente->total)) }} Franc Congolais

@@ -15,7 +15,7 @@ return [
     'name' => env('APP_NAME', 'ETS DANICHOUX'),
     "logo"=>"/images/default-avatar.png",
     "adresse"=>"VENTE PRODUITS ALIMENTAIRES ET DIVERS \n ROUTE MATADI N:1 C/NGALIEMA \n EN FACE DE WENZE BADIADINGI \n COMPLEXE SCOLAIRE CHANDELIER ",
-            'telephone' => "0816869617",
+            'telephone' => "0816869617  -  0814177714",
             'rccm' =>  'RCCM : CD/KNM/RCCM20-A 01758',
 
     #'name' => env('APP_NAME', 'Laravel'),
