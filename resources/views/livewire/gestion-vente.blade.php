@@ -270,6 +270,15 @@
                                         Traitement...
                                     </span>
                                 </button>
+
+                                @if ($monnaie)
+                                    <div class="mt-2 text-sm font-bold text-base-content/70">
+                                        Valeur en Dollar: {{ number_format($total / $monnaie->taux_change, 2) }}{{ $monnaie->symbole}}
+                                    </div>
+                                    
+                                @endif
+                                    
+                                
                             </div>
                         @else
                             <div class="text-center py-8 text-base-content/70">

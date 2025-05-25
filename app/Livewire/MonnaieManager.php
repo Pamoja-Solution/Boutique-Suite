@@ -17,6 +17,7 @@ class MonnaieManager extends Component
     public $libelle;
     public $symbole;
     public $code;
+    public $taux_change = 0; // Ajout de cette propriété
     public $statut = '0';
     public $isOpen = false;
     public $searchTerm = '';
@@ -60,6 +61,7 @@ class MonnaieManager extends Component
         $this->libelle = '';
         $this->symbole = '';
         $this->code = '';
+        $this->taux_change = 0; // Réinitialisation
         $this->statut = '0';
         $this->resetValidation();
     }
@@ -70,6 +72,7 @@ class MonnaieManager extends Component
             'libelle' => ['required', Rule::unique('monnaies', 'libelle')->ignore($this->monnaie_id)],
             'symbole' => ['required', Rule::unique('monnaies', 'symbole')->ignore($this->monnaie_id)],
             'code' => ['required', 'max:10', Rule::unique('monnaies', 'code')->ignore($this->monnaie_id)],
+            'taux_change' => 'required|numeric|min:0', // Validation du taux de change
             'statut' => 'required|in:0,1',
         ]);
 
@@ -79,7 +82,7 @@ class MonnaieManager extends Component
                 'libelle' => $this->libelle,
                 'symbole' => $this->symbole,
                 'code' => strtoupper($this->code),
-                'taux_change' => 0,
+                'taux_change' => $this->taux_change,
                 'statut' => $this->statut,
             ]
         );
@@ -99,6 +102,7 @@ class MonnaieManager extends Component
         $this->libelle = $monnaie->libelle;
         $this->symbole = $monnaie->symbole;
         $this->code = $monnaie->code;
+        $this->taux_change = $monnaie->taux_change; // Récupération du taux
         $this->statut = $monnaie->statut;
         
         $this->openModal();

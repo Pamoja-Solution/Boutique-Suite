@@ -29,7 +29,7 @@ class Monnaie extends Model
 
     public function tauxChanges()
     {
-        return $this->hasMany(TauxChange::class);
+        return $this->hasMany(TauxChange::class,'monnaie_source_id');
     }
     
 }

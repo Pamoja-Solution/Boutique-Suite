@@ -90,12 +90,12 @@
                                 Monnaie
                             </a>
                         </li>
-                        <li>
+                        <!--li>
                             <a href="{{route('taux')}}" wire:navigate >
                                 <i class="fas fa-exchange-alt"></i>
                                 Taux
                             </a>
-                        </li>
+                        </li-->
                         <li>
                             <a href="{{ route('user.statistics') }}" wire:navigate >
                                 <i class="fas fa-chart-line"></i>
@@ -204,10 +204,10 @@
                         <i class="fas fa-coins mr-3"></i>
                         Monnaie
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link href="{{route('taux')}}" wire:navigate >
+                    <!-- --x-responsive-nav-link href="{{route('taux')}}" wire:navigate >
                         <i class="fas fa-exchange-alt mr-3"></i>
                         Taux
-                    </x-responsive-nav-link>
+                    < /x-responsive-nav-link-->
                     <x-responsive-nav-link href="{{ route('user.statistics') }}" wire:navigate >
                         <i class="fas fa-chart-line mr-3"></i>
                         Statistiques

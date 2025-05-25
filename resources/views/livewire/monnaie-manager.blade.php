@@ -36,6 +36,7 @@
                                 <th>Libellé</th>
                                 <th>Symbole</th>
                                 <th>Code</th>
+                                <th>Taux de change (CDF)</th>
                                 <th>Statut</th>
                                 <th>Actions</th>
                             </tr>
@@ -46,6 +47,7 @@
                                     <td>{{ $monnaie->libelle }}</td>
                                     <td>{{ $monnaie->symbole }}</td>
                                     <td>{{ $monnaie->code }}</td>
+                                    <td>{{ number_format($monnaie->taux_change, 0, ',', ' ') }}</td>
                                     <td>
                                         <span class="badge {{ $monnaie->statut == '1' ? 'badge-success' : 'badge-error' }}">
                                             {{ $monnaie->statut == '1' ? 'Actif' : 'Inactif' }}
@@ -64,7 +66,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center text-gray-500">
+                                    <td colspan="6" class="text-center text-gray-500">
                                         Aucune monnaie trouvée.
                                     </td>
                                 </tr>
@@ -112,6 +114,19 @@
                                         <input type="text" id="code" wire:model="code" 
                                                class="input input-bordered">
                                         @error('code') <span class="text-error text-xs">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <!-- Nouveau champ pour le taux de change -->
+                                    <div class="form-control mb-4">
+                                        <label class="label">
+                                            <span class="label-text">Taux de change (en CDF)</span>
+                                        </label>
+                                        <input type="number" id="taux_change" wire:model="taux_change" 
+                                               class="input input-bordered" step="0.01" min="0">
+                                        @error('taux_change') <span class="text-error text-xs">{{ $message }}</span> @enderror
+                                        <div class="text-sm text-gray-500 mt-1">
+                                            Ex: Pour 1 USD = 2800 CDF, entrez 2800
+                                        </div>
                                     </div>
                                     
                                     <div class="form-control mb-4">

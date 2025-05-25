@@ -5,6 +5,8 @@ use App\Models\Produit;
 use App\Models\Client;
 use App\Models\Vente;
 use App\Models\DetailVente;
+use App\Models\Monnaie;
+use App\Models\TauxChange;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -237,12 +239,14 @@ class GestionVente extends Component
                 $total += $prod->prix_vente * $quantity;
             }
         }
+        $monnaie= Monnaie::where('code', 'USD')->first();
         
         return view('livewire.gestion-vente', [
             'produits' => $produits,
             'panier' => $panier,
             'total' => $total,
             "client" => $this->searchClients(),
+            "monnaie" => $monnaie,
         ]);
     }
     

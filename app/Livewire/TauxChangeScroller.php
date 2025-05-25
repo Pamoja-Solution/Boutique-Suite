@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\TauxChange;
+use App\Models\Monnaie;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
@@ -11,14 +11,15 @@ class TauxChangeScroller extends Component
 {
     public function render()
     {
-        // On récupère les derniers taux d'échange
-        $tauxChanges = TauxChange::with(['monnaieSource', 'monnaieCible'])
-            ->latest('date_effet')
-            ->limit(20)
+        // On récupère toutes les monnaies avec leur taux de change (par rapport au CDF)
+        $monnaies = Monnaie::where('code', '!=', 'CDF') // Exclure le franc congolais lui-même
+            ->where('taux_change', '>', 0) // Uniquement celles avec un taux défini
+            ->where('statut', 1) // Uniquement les monnaies actives
+            ->orderBy('code')
             ->get();
 
         return view('livewire.taux-change-scroller', [
-            'tauxChanges' => $tauxChanges
+            'monnaies' => $monnaies
         ]);
     }
 }
