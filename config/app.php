@@ -12,7 +12,7 @@ return [
     | other UI elements where an application name needs to be displayed.
     |
     */
-    'name' => env('APP_NAME', 'ETS DANICHOUX'),
+    'name' =>  'ETS DANICHOUX',
     "logo"=>"/images/default-avatar.png",
     "adresse"=>"VENTE PRODUITS ALIMENTAIRES ET DIVERS \n ROUTE MATADI N:1 C/NGALIEMA \n EN FACE DE WENZE BADIADINGI \n COMPLEXE SCOLAIRE CHANDELIER ",
             'telephone' => "0816869617  -  0814177714",
