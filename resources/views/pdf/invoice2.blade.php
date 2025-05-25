@@ -6,8 +6,8 @@
     <style>
         @page { margin: 0; padding: 0; size: 72mm auto; }
         body { 
-            font-family: 'DejaVu Sans', Arial, sans-serif; 
-            font-size: 9px;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; 
+            font-size: 11px;
             margin: 0;
             padding: 2mm;
         }
@@ -75,7 +75,7 @@
         .footer {
             text-align: center;
             margin-top: 10px;
-            font-size: 8px;
+            font-size: 11px;
         }
         .barcode {
             margin-top: 10px;
@@ -229,18 +229,22 @@
             
         </tr>
         @if ($monnaie)
-                                    <div class="mt-2 text-sm font-bold text-base-content/70">
-                                        DOLLAR: <span class="bold">{{ number_format($vente->total / $monnaie->taux_change, 2) }}{{ $monnaie->symbole}}</span>
-                                    </div>
-                                    
+        <tr>
+            <td class="bold">DOLLAR :</td>
+            <td class="text-right bold">{{ number_format($vente->total / $monnaie->taux_change, 2) }}{{ $monnaie->symbole}}</td>
+            
+        </tr>
+                                 
                                 @endif
        
     </table>
     {{ ucfirst(\App\Helpers\NumberToWordsHelper::toWordsWithDecimals($vente->total)) }} Franc Congolais
 
 
-    <div class="footer">
+    <div class="footer" >
+        <p>Les marchandises vendues ne sont ni échangées ni reprises</p>
         <p>Merci pour votre achat !</p>
+
         <p>{{ date('d/m/Y H:i') }}</p>
         <div class="barcode-container" style="text-align: center; margin: 15px 0;">
             <!-- Code-barre image -->
@@ -249,19 +253,7 @@
                  style="height: 25px; width: auto; max-width: 100%; image-rendering: crisp-edges;"-->
             
             <!-- Numéro de matricule -->
-            <div class="barcode-number" style="
-                font-family: 'Courier New', monospace;
-                font-size: 14px;
-                letter-spacing: 2px;
-                margin-top: 5px;
-                font-weight: bold;
-                background: #f8f8f8;
-                display: inline-block;
-                padding: 3px 10px;
-                border-radius: 4px;
-            ">
-                *{{ $vente->matricule }}*
-            </div>
+            
         </div>
     </div>
 </body>

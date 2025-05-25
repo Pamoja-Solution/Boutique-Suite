@@ -274,6 +274,7 @@
                                             </button>
                                             <button 
                                                 class="btn btn-xs btn-ghost"
+                                                
                                                 wire:click="printInvoice({{ $sale->id }})"
                                                 title="Imprimer"
                                             >
