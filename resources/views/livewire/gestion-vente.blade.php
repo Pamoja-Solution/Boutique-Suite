@@ -92,7 +92,7 @@
                                 </thead>
                                 <tbody>
                                     @forelse($produits as $produit)
-                                        <tr wire:key="product-card-{{ $produit->id }}-{{ $loop->index }}" >
+                                        <tr wire:key="product-car-{{ $produit->id }}-{{ $loop->index }}" >
                                             <td>
                                                 <div >{{ $produit->nom }}</div>
                                             </td>

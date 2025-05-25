@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Ticket #{{ $vente->matricule }}</title>
     <style>
-        @page { margin: 0; padding: 0; size: 80mm auto; }
+        @page { margin: 0; padding: 0; size: 72mm auto; }
         body { 
             font-family: 'DejaVu Sans', Arial, sans-serif; 
             font-size: 9px;
