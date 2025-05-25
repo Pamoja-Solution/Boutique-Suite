@@ -206,7 +206,7 @@
                 <td class="td">
                     {{ \Str::limit($detail->produit->nom ,20)}}<br>
                 </td>
-                <td class="td">
+                <td class=" text-right td">
                     {{ number_format($detail->prix_unitaire, 0, '.', ' ') }} 
                 </td>
                 <td class="text-right td">{{ number_format($detail->quantite * $detail->prix_unitaire, 1, '.', ' ') }} </td>
@@ -230,7 +230,7 @@
         </tr>
         @if ($monnaie)
         <tr>
-            <td class="bold">DOLLAR :</td>
+            <td class="bold">DOLLARS :</td>
             <td class="text-right bold">{{ number_format($vente->total / $monnaie->taux_change, 2) }}{{ $monnaie->symbole}}</td>
             
         </tr>
@@ -242,7 +242,7 @@
 
 
     <div class="footer" >
-        <p>Les marchandises vendues ne sont ni échangées ni reprises</p>
+        <p>Les marchandises vendues ne sont ni reprises ni échangées  </p>
         <p>Merci pour votre achat !</p>
 
         <p>{{ date('d/m/Y H:i') }}</p>

@@ -260,7 +260,7 @@
                                 
                                 <div class="flex justify-between font-bold text-lg">
                                     <span>Total:</span>
-                                    <span>{{ number_format($total, 2) }} Fc</span>
+                                    <span>{{ number_format($total, 2) }} Fc</text-rightspan>
                                 </div>
                                 
                                 <button wire:click="confirmSale" wire:loading.attr="disabled" class="btn btn-primary w-full mt-4">

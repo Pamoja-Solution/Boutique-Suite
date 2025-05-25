@@ -152,14 +152,14 @@ class GestionVente extends Component
             DB::commit();
     
             session()->flash('message', 'Vente effectuée avec succès');
-        $monnaie= Monnaie::where('code', 'USD')->first();
+        
             
             $this->reset(['selectedProduits', 'quantities', 'newClient']);
             
             // Rediriger vers la route d'impression immédiatement
             $this->dispatch('openNewTab', url: route('ventes.print-invoice', [
                 'vente' => $vente->id,
-                'monnaie'=>$monnaie
+                'monnaie'=>Monnaie::where('code', 'USD')->first()
                 
             
             ]));

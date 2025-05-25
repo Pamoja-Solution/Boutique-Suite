@@ -12,6 +12,7 @@ use App\Livewire\VendeurMedicaments;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Livewire\Dashboard;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\InventaireController;
 use App\Http\Controllers\MonnaieController;
 use App\Livewire\UserManager;
@@ -192,6 +193,12 @@ Route::get('/statistiques-utilisateurs', \App\Livewire\UserStatistics::class)
     });
     
     
+
+    // Route pour afficher la page du scanner
+Route::get('/scanner', [BarcodeController::class, 'index'])->name('scanner.index');
+
+// Route pour traiter les scans
+Route::post('/scan-barcode', [BarcodeController::class, 'processScan'])->name('scan.barcode');
     //Route::get('/gestion-codes-barres', GestionCodesBarres::class)->name('gestion.codes-barres');
     // routes/web.php
 Route::get('/produits/codes-barres', \App\Livewire\ProduitsCodeBarres::class)->name('gestion.codes-barres');
