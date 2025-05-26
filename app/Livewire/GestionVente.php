@@ -256,7 +256,8 @@ public function processBarcodeScan()
         $query = Produit::query()
         ->where(function ($query) {
             $query->where('nom', 'like', '%' . $this->search . '%')
-                ->orWhere('reference_interne', 'like', '%' . $this->search . '%');
+                ->orWhere('reference_interne', 'like', '%' . $this->search . '%')
+                ->orWhere('code_barre', 'like', '%' . $this->search . '%');
         })
         ->where('stock', '>', 0)
         ->where(function ($query) {
