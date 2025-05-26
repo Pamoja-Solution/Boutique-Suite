@@ -70,14 +70,93 @@
                         
                         <p class="text-base-content/70 mb-4">Recherchez des produits, ajoutez-les au panier et finalisez les ventes</p>
                         
-                        <div class="form-control">
-                            <label class="input input-bordered flex items-center gap-2">
-                                <svg class="w-4 h-4 opacity-70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                                </svg>
-                                <input wire:model.live="search" type="text" class="grow" placeholder="Rechercher un produit...">
-                            </label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-control">
+                                <label class="input input-bordered flex items-center gap-2">
+                                    <svg class="w-4 h-4 opacity-70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                    </svg>
+                                    <input wire:model.live="search" type="text" class="grow" placeholder="Rechercher un produit...">
+                                </label>
+                            </div>
+    
+                            <!-- Dans la section panier, près du bouton "Nouveau client" -->
+                            <button wire:click="openScanner" class="btn btn-primary">
+                                <i class="fa-solid fa-barcode"></i>
+                                Scanner
+                            </button>
                         </div>
+
+                        <!-- Modal Scanner -->
+                        @if($showScannerModal)
+                        <div class="modal modal-open">
+                            <div class="modal-box max-w-md">
+                                <h3 class="font-bold text-lg">Scanner un code-barres</h3>
+                                
+                                <div class="py-4">
+                                    <label class="input input-bordered flex items-center gap-2 mt-4">
+                                        <input 
+                                            type="text" 
+                                            wire:model.live="barcodeInput"
+                                            wire:keydown.enter="processBarcodeScan"
+                                            id="barcode-scanner-input"
+                                            class="grow" 
+                                            placeholder="Scannez un code-barres..."
+                                            autofocus
+                                        />
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </label>
+                                    
+                                    @error('barcode')
+                                        <div class="text-error text-sm mt-2">{{ $message }}</div>
+                                    @enderror
+                                    
+                                    <!-- Afficher le panier dans le modal -->
+                                    @if(count($selectedProduits) > 0)
+                                        <div class="mt-6 border-t pt-4">
+                                            <h4 class="font-medium mb-2">Panier</h4>
+                                            <div class="space-y-2 max-h-60 overflow-y-auto">
+                                                @foreach($panier as $prod)
+                                                    <div class="flex justify-between items-center">
+                                                        <span>{{ $prod->nom }}</span>
+                                                        <span class="font-bold">
+                                                            {{ $quantities[$prod->id] ?? 1 }} × {{ number_format($prod->prix_vente, 2) }} Fc
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <div class="font-bold text-lg mt-2 border-t pt-2">
+                                                Total: {{ number_format($total, 2) }} Fc
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                
+                                <div class="modal-action">
+                                    <button wire:click="closeScanner(false)" class="btn btn-error">
+                                        Annuler
+                                    </button>
+                                    <button wire:click="closeScanner(true)" class="btn btn-primary">
+                                        Terminer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                        document.addEventListener('livewire:init', () => {
+                            Livewire.on('focusBarcodeInput', () => {
+                                const input = document.getElementById('barcode-scanner-input');
+                                if (input) {
+                                    input.focus();
+                                    input.select();
+                                }
+                            });
+                        });
+                        </script>
+                        @endif
                         
                         <div class="overflow-x-auto mt-4">
                             <table class="table table-zebra">

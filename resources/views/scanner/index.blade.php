@@ -17,19 +17,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') {
             const barcode = this.value.trim();
             if (barcode) {
-                displayBarcode(barcode); // Affiche directement le code
-                this.value = ''; // Réinitialise le champ
+                processScan(barcode);
+                this.value = '';
             }
         }
     });
     
-    function displayBarcode(barcode) {
-        const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = `
-            <div class="alert alert-info">
-                <strong>Code scanné :</strong> ${barcode}
-            </div>
-        `;
+    function processScan(barcode) {
+        fetch('{{ route("scan.barcode") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ barcode: barcode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').innerHTML = 
+                data.success ? `<div class="alert alert-success">Produit: ${data.product.name}</div>` 
+                            : `<div class="alert alert-danger">${data.message}</div>`;
+        });
     }
 });
 </script>

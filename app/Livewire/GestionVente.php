@@ -26,6 +26,18 @@ class GestionVente extends Component
     public $clientId = null;
     public $clients = [];
     
+    // Dans la classe GestionVente
+    public $showScannerModal = false;
+    public $barcodeInput = '';
+
+
+    // Méthode pour ouvrir le modal scanner
+    public function openScanner()
+    {
+        $this->showScannerModal = true;
+        $this->dispatch('focusBarcodeInput'); // Événement pour focus l'input
+    }
+
     // Modal states
     public $showModal = false;
     public $modalType = ''; // 'new-sale', 'view-stock', etc.
@@ -60,6 +72,44 @@ class GestionVente extends Component
         'newClient.adresse' => 'nullable|string|max:255',
     ];
 
+
+
+    // Méthode pour fermer le modal scanner
+public function closeScanner($saveCart = false)
+{
+    if (!$saveCart) {
+        // Vider le panier si on annule
+        $this->selectedProduits = [];
+        $this->quantities = [];
+    }
+    $this->showScannerModal = false;
+    $this->barcodeInput = '';
+}
+
+// Méthode pour traiter le scan
+public function processBarcodeScan()
+{
+    if (empty($this->barcodeInput)) {
+        return;
+    }
+
+    // Rechercher le produit par code-barres
+    $produit = Produit::where('code_barre', $this->barcodeInput)->first();
+
+    if ($produit) {
+        // Ajouter au panier ou incrémenter la quantité
+        if (in_array($produit->id, $this->selectedProduits)) {
+            $this->incrementQuantity($produit->id);
+        } else {
+            $this->addToCart($produit->id);
+        }
+    } else {
+        $this->addError('barcode', 'Produit non trouvé');
+    }
+
+    $this->barcodeInput = '';
+    $this->dispatch('focusBarcodeInput'); // Re-focus après traitement
+}
     // Modifiez la méthode validateSaleForm
     public function validateSaleForm()
     {
@@ -152,16 +202,11 @@ class GestionVente extends Component
             DB::commit();
     
             session()->flash('message', 'Vente effectuée avec succès');
-        
-            
             $this->reset(['selectedProduits', 'quantities', 'newClient']);
-            
             // Rediriger vers la route d'impression immédiatement
             $this->dispatch('openNewTab', url: route('ventes.print-invoice', [
                 'vente' => $vente->id,
                 'monnaie'=>Monnaie::where('code', 'USD')->first()
-                
-            
             ]));
             
         } catch (\Exception $e) {
@@ -169,7 +214,6 @@ class GestionVente extends Component
             session()->flash('error', 'Une erreur est survenue: ' . $e->getMessage());
         }
     }
-    
     // Méthode modifiée pour rechercher les clients manuellement
     public function searchClients()
     {
@@ -181,7 +225,6 @@ class GestionVente extends Component
         ->get();
         return $client;
     }
-
     protected $messages = [
         'clientId.required' => 'Veuillez sélectionner un client',
         'selectedProduits.required' => 'Veuillez sélectionner au moins un produit',

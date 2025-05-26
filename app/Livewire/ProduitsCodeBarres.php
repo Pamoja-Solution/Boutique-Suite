@@ -121,7 +121,7 @@ class ProduitsCodeBarres extends Component
     $pdf = Pdf::loadView('pdf.codes-barres', [
         'produits' => $produitsWithBarcodes
     ])
-    ->setPaper([0, 0, $widthInPoints, $heightInPoints], 'portrait')
+    ->setPaper("A4", 'portrait')
     ->setOption('margin-top', 0)
     ->setOption('margin-bottom', 0)
     ->setOption('margin-left', 0)

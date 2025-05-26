@@ -18,9 +18,9 @@ class BarcodeController extends Controller
     public function processScan(Request $request)
     {
         $barcode = $request->input('barcode');
-        
         // Votre logique de traitement
         $product = Produit::where('code_barre', $barcode)->first();
+        dd( $product);
         
         return response()->json([
             'success' => !!$product,
