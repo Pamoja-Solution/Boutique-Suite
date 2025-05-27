@@ -366,6 +366,37 @@
                                 </svg>
                                 <p class="mt-2">Votre panier est vide</p>
                                 <p class="text-sm mt-1">Ajoutez des produits depuis la liste pour commencer.</p>
+
+                                <div class="overflow-x-auto">
+                                    <table class="table">
+                                      <!-- head -->
+                                      <thead>
+                                        <tr>
+                                          <th>Client</th>
+                                          <th>Total</th>
+                                          <th>Action</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody> 
+                                    @forelse ($ventesd as $key => $recent)
+                                
+                                        
+                                        
+                                                <!-- row 1 -->
+                                                <tr class="bg-base-200">
+                                                  <td class="text-xs">{{ Str::limit($recent->client->nom,15)}}</td>
+                                                  <td>{{ number_format($recent->total, 1,'.'," ") }}FC </td>
+                                                  <td>
+                                                    <button class="btn btn-primary btn-sm" onclick="window.open('{{ route('ventes.print-invoice', ['vente' => $recent->id]) }}', '_blank')">Imprimer</button>
+                                                  </td>
+                                                </tr>
+                                               
+                                    @empty
+                                    
+                                @endforelse
+
+                            </tbody>
+                        </table>
                             </div>
                         @endif
                     </div>
@@ -619,4 +650,8 @@
             window.open(url, '_blank'); // Ouvre dans un nouvel onglet
         });
     });
+
+    window.addEventListener('sale-confirmed', event => {
+    window.open(event.detail.url, '_blank');
+});
 </script>

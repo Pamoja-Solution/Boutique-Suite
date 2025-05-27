@@ -201,7 +201,7 @@ public function processBarcodeScan()
     
             DB::commit();
     
-            session()->flash('message', 'Vente effectuée avec succès');
+            //session()->flash('message', 'Vente effectuée avec succès');
             $this->reset(['selectedProduits', 'quantities', 'newClient']);
             // Rediriger vers la route d'impression immédiatement
             $this->dispatch('openNewTab', url: route('ventes.print-invoice', [
@@ -286,13 +286,14 @@ public function processBarcodeScan()
             }
         }
         $monnaie= Monnaie::where('code', 'USD')->first();
-        
+        $vented = $this->getRecentVentesPanier();
         return view('livewire.gestion-vente', [
             'produits' => $produits,
             'panier' => $panier,
             'total' => $total,
             "client" => $this->searchClients(),
             "monnaie" => $monnaie,
+            "ventesd"=>$vented
         ]);
     }
     
@@ -440,6 +441,15 @@ public function processBarcodeScan()
         ->today()          // Utilisation du scope
         ->latest()
         ->get();
+    }
+
+    public function getRecentVentesPanier()
+    {
+        return Vente::with('client')->select('id', 'client_id', 'total', 'created_at')
+        ->forCurrentUser()  // Utilisation du scope
+        ->today()          // Utilisation du scope
+        ->latest()
+        ->limit(3)->get();
     }
     
     public function getProduitsExpiration()
