@@ -359,44 +359,44 @@
                                     
                                 
                             </div>
-                        @else
+                            @else
                             <div class="text-center py-8 text-base-content/70">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                                 <p class="mt-2">Votre panier est vide</p>
                                 <p class="text-sm mt-1">Ajoutez des produits depuis la liste pour commencer.</p>
-
-                                <div class="overflow-x-auto">
-                                    <table class="table">
-                                      <!-- head -->
-                                      <thead>
+                            </div>
+                        
+                            <!-- Déplacer ce tableau en dehors du bloc "panier vide" -->
+                            <div class="overflow-x-auto mt-8">
+                                <table class="table">
+                                    <thead>
                                         <tr>
-                                          <th>Client</th>
-                                          <th>Total</th>
-                                          <th>Action</th>
+                                            <th>Client</th>
+                                            <th>Total</th>
+                                            <th>Action</th>
                                         </tr>
-                                      </thead>
-                                      <tbody> 
-                                    @forelse ($ventesd as $key => $recent)
-                                
-                                        
-                                        
-                                                <!-- row 1 -->
-                                                <tr class="bg-base-200">
-                                                  <td class="text-xs">{{ Str::limit($recent->client->nom,15)}}</td>
-                                                  <td>{{ number_format($recent->total, 1,'.'," ") }}FC </td>
-                                                  <td>
-                                                    <button class="btn btn-primary btn-sm" onclick="window.open('{{ route('ventes.print-invoice', ['vente' => $recent->id]) }}', '_blank')">Imprimer</button>
-                                                  </td>
-                                                </tr>
-                                               
-                                    @empty
-                                    
-                                @endforelse
-
-                            </tbody>
-                        </table>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($ventesd ?? [] as $key => $recent)
+                                            <tr class="bg-base-200">
+                                                <td class="text-xs">{{ Str::limit($recent->client->nom, 15) }}</td>
+                                                <td>{{ number_format($recent->total, 1, '.', ' ') }}FC</td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm" 
+                                                            onclick="window.open('{{ route('ventes.print-invoice', ['vente' => $recent->id]) }}', '_blank')">
+                                                        Imprimer
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center">Aucune vente récente</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         @endif
                     </div>
