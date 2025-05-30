@@ -8,7 +8,7 @@ Pour configurer un projet Laravel après avoir cloné le dépôt depuis Git, sui
 
 2. **Clonez le dépôt si ce n'est pas déjà fait :**
    ```bash
-   git clone [<url-du-dépôt>](https://github.com/Pamoja-Solution/Boutique-Suite.git)
+   git clone (https://github.com/Pamoja-Solution/Boutique-Suite.git)
    cd Boutique-Suite
    ```
 
