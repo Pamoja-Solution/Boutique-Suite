@@ -8,7 +8,7 @@ Pour configurer un projet Laravel après avoir cloné le dépôt depuis Git, sui
 
 2. **Clonez le dépôt si ce n'est pas déjà fait :**
    ```bash
-   git clone (https://github.com/Pamoja-Solution/Boutique-Suite.git)
+   git clone https://github.com/Pamoja-Solution/Boutique-Suite.git
    cd Boutique-Suite
    ```
 
@@ -25,6 +25,11 @@ Pour configurer un projet Laravel après avoir cloné le dépôt depuis Git, sui
      ```
    - Ouvrez le fichier `.env` et configurez les paramètres de votre base de données et autres configurations spécifiques au projet (comme les clés API, les paramètres de messagerie, etc.). Les informations typiques incluent :
      ```dotenv
+     APP_TIMEZONE=Africa/Kinshasa
+        APP_CURRENCY=CDF
+
+        APP_LOCALE=fr
+
      DB_CONNECTION=mysql
      DB_HOST=127.0.0.1
      DB_PORT=3306
