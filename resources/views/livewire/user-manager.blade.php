@@ -147,7 +147,10 @@
                                 <label class="label">
                                     <span class="label-text">Email</span>
                                 </label>
-                                <input type="email" wire:model.defer="email" class="input input-bordered">
+                                <input type="email" 
+                                       wire:model.defer="email" 
+                                       class="input input-bordered"
+                                       placeholder="Votre email">
                                 @error('email') <span class="text-error text-xs">{{ $message }}</span> @enderror
                             </div>
                             <div class="form-control">

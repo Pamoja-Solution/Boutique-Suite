@@ -19,6 +19,25 @@ class UserManager extends Component
     public $isOpen = false;
     public $action = '';
     public $search = '';
+    // Modifiez votre méthode d'ouverture de modal
+public function openModalWithRandomEmail()
+{
+    // Génère un email aléatoire
+    $randomId = rand(1000, 9999);
+    $this->email = "user{$randomId}@example.com";
+    
+    // Ouvre le modal
+    $this->isOpen = true;
+}
+
+// Ou si vous voulez générer lors de l'initialisation
+public function mount()
+{
+    $randomId = rand(1000, 9999);
+    $this->email = "user{$randomId}@example.com";
+}
+
+
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -55,6 +74,9 @@ class UserManager extends Component
 
     public function openModal()
     {
+        $randomId = rand(1000, 9999);
+        $this->email = "user{$randomId}@example.com";
+        
         $this->isOpen = true;
     }
 
