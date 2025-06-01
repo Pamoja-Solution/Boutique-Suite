@@ -245,7 +245,7 @@
                             
                             <div class="modal-action">
                                 <button type="button" wire:click="closeModal" class="btn">Annuler</button>
-                                <button type="submit" class="btn btn-primary" wire:click.prevent="createRayon">
+                                <button type="submit" class="btn btn-primary" >
                                     {{ $action === 'createRayon' ? 'Créer' : 'Mettre à jour' }}
                                 </button>
                             </div>
