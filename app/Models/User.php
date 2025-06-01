@@ -81,7 +81,7 @@ class User extends Authenticatable
 
     private static function generateMatricule()
 {
-    return str_pad(mt_rand(0, 99999), 4, '0', STR_PAD_LEFT);
+    return str_pad(mt_rand(0, 99999), 5, '0', STR_PAD_LEFT);
 }
 
     public function isGerant()
