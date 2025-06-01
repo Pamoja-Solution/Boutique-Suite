@@ -72,12 +72,18 @@ class User extends Authenticatable
         });
     }
     
-    private static function generateMatricule()
+    /*private static function generateMatricule()
     {
         $prefix = 'AG';
         $randomNumber = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4)); // 4 caractères aléatoires
         return $prefix . $randomNumber;
-    }
+    }*/
+
+    private static function generateMatricule()
+{
+    return str_pad(mt_rand(0, 99999), 4, '0', STR_PAD_LEFT);
+}
+
     public function isGerant()
     {
         return $this->role === 'gerant';
