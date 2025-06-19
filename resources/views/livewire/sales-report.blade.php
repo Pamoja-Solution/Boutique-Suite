@@ -145,6 +145,69 @@
             </div>
         @endif
     
+
+
+        <div class="bg-base-200 p-4 rounded-box mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Détails des produits vendus</h3>
+            </div>
+        
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="w-1/4">Produit</th>
+                            <th class="w-1/5">Référence</th>
+                            <th class="w-1/5 text-right">Quantité vendue</th>
+                            <th class="w-1/5 text-right">Stock restant</th>
+                            <th class="w-1/5 text-right">Total vendu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($this->productsSold as $product)
+                            <tr>
+                                <td>{{ $product['nom'] }}</td>
+                                <td>
+                                    <span class="badge badge-outline">
+                                        {{ $product['reference'] }}
+                                    </span>
+                                </td>
+                                <td class="text-right font-mono">
+                                    {{ number_format($product['quantite_vendue'], 0) }}
+                                </td>
+                                <td class="text-right font-mono">
+                                    {{ number_format($product['quantite_restante'], 0) }}
+                                </td>
+                                <td class="text-right font-mono">
+                                    {{ number_format($product['total_vendu'], 2) }} FC
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-gray-500 py-4">
+                                    Aucun produit vendu pour les critères sélectionnés
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    
+                    @if(count($this->productsSold) > 0)
+                        <tfoot>
+                            <tr class="bg-base-300/50">
+                                <th colspan="2" class="font-semibold">Totaux</th>
+                                <th class="text-right font-mono font-semibold">
+                                    {{ number_format(array_sum(array_column($this->productsSold->toArray(), 'quantite_vendue')), 0) }}
+                                </th>
+                                <th></th>
+                                <th class="text-right font-mono font-semibold">
+                                    {{ number_format(array_sum(array_column($this->productsSold->toArray(), 'total_vendu')), 2) }} FC
+                                </th>
+                            </tr>
+                        </tfoot>
+                    @endif
+                </table>
+            </div>
+        </div>
         <!-- Liste des ventes -->
         <div class="bg-base-200 p-4 rounded-box mb-6">
             <div class="flex justify-between items-center mb-4">

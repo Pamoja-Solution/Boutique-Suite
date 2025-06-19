@@ -111,6 +111,41 @@
         </table>
     @endif
 
+    <div style="">
+        <h2>Détails des produits vendus</h2>
+        <table style="table">
+            <thead>
+                <tr style="background-color: #f3f4f6;">
+                    <th class="text-right">Produit</th>
+                    <th class="text-right">Q .V</th>
+                    <th class="text-right">St. rest</th>
+                    <th class="text-right">Total vendu</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($productsSold as $product)
+                    <tr>
+                        <td >{{ $product['nom'] }}</td>
+                        <td>{{ $product['quantite_vendue'] }}</td>
+                        <td>{{ $product['quantite_restante'] }}</td>
+                        <td>{{ number_format($product['total_vendu'], 2) }} FC</td>
+                    </tr>
+                @endforeach
+            </tbody>
+            @if(count($productsSold) > 0)
+                <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ array_sum(array_column($productsSold->toArray(), 'quantite_vendue')) }}</th>
+                        <th></th>
+                        <th>{{ number_format(array_sum(array_column($productsSold->toArray(), 'total_vendu')), 2) }} FC</th>
+                    </tr>
+                </tfoot>
+            @endif
+        </table>
+    </div>
+
+
     @if($includeDetails)
         <div class="divider"></div>
         <div class="text-center"><strong>DETAIL DES VENTES</strong></div>

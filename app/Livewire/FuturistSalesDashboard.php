@@ -308,21 +308,34 @@ public $pdfOrientation = 'portrait';
     }
 
     public function getTopProduitsProperty()
-    {
-        return Produit::query()
-            ->select('produits.*', DB::raw('SUM(details_vente.quantite) as total_quantity'))
-            ->join('details_vente', 'details_vente.produit_id', '=', 'produits.id')
-            ->join('ventes', 'details_vente.vente_id', '=', 'ventes.id')
-            ->where('ventes.user_id', Auth::user()->id)
-            ->when($this->statusFilter !== 'all', function ($query) {
-                $query->where('ventes.statut', $this->statusFilter);
-            })
-            ->whereBetween('ventes.created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
-            ->groupBy('produits.id')
-            ->orderByDesc('total_quantity')
-            ->limit(5)
-            ->get();
-    }
+{
+    // Sauvegarder la configuration actuelle
+    $strictMode = DB::getConfig('strict');
+    
+    // Désactiver temporairement le mode strict
+    config(['database.connections.mysql.strict' => false]);
+    DB::purge();
+    
+    $results = Produit::query()
+        ->select('produits.*', DB::raw('SUM(details_vente.quantite) as total_quantity'))
+        ->join('details_vente', 'details_vente.produit_id', '=', 'produits.id')
+        ->join('ventes', 'details_vente.vente_id', '=', 'ventes.id')
+        ->where('ventes.user_id', Auth::user()->id)
+        ->when($this->statusFilter !== 'all', function ($query) {
+            $query->where('ventes.statut', $this->statusFilter);
+        })
+        ->whereBetween('ventes.created_at', [$this->startDate, Carbon::parse($this->endDate)->endOfDay()])
+        ->groupBy('produits.id')
+        ->orderByDesc('total_quantity')
+        ->limit(5)
+        ->get();
+    
+    // Restaurer la configuration originale
+    config(['database.connections.mysql.strict' => $strictMode]);
+    DB::purge();
+    
+    return $results;
+}
 
  // Méthode d'export
     public function exportData()

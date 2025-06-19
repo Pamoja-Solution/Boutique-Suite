@@ -176,8 +176,11 @@
                                                 <div >{{ $produit->nom }}</div>
                                             </td>
                                             <td>{{ number_format($produit->prix_vente, 2) }} Fc</td>
-                                            <td>{{ $produit->stock }} {{ $produit->unite_mesure }}</td>
-                                            <td>{{ $produit->reference_interne }}</td>
+                                            <td>{{ $produit->stock }} 
+                                                <span class="badge badge-primary">{{ $produit->unite_mesure }}</span>
+                                            </td>
+                                            <td>{{ $produit->reference_interne }}
+                                            </td>
                                             <td>
                                                 <div class="flex gap-2">
                                                     <button wire:click="openModal('details', {{ $produit->id }})" class="btn btn-sm btn-ghost text-info">

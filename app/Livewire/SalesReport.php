@@ -208,6 +208,7 @@ public function salesBySeller()
     $pdf = Pdf::loadView('exports.sales2-pdf', [
         'sales' => $sales,
         'startDate' => $this->startDate,
+        'productsSold' => $this->productsSold, // Ajout des produits vendus
         'endDate' => $this->reportType === 'custom' ? $this->endDate : $this->startDate,
         'reportType' => $this->reportType,
         'selectedUser' => $this->selectedUserId !== 'all' ? User::find($this->selectedUserId) : null,
@@ -278,4 +279,47 @@ public function exportToExcel()
     {
         return view('livewire.sales-report');
     }
+
+
+// Ajoutez cette méthode pour obtenir les détails des produits
+#[Computed]
+public function productsSold()
+{
+    return (Vente::with(['details.produit'])
+        ->when($this->selectedUserId !== 'all', fn($q) => $q->where('user_id', $this->selectedUserId))
+        ->when($this->reportType === 'daily', fn($q) => $q->whereDate('created_at', $this->startDate))
+        ->when($this->reportType === 'monthly', fn($q) => $q->whereMonth('created_at', Carbon::parse($this->startDate)->month)
+            ->whereYear('created_at', Carbon::parse($this->startDate)->year))
+        ->when($this->reportType === 'custom', fn($q) => $q->whereBetween('created_at', [
+            Carbon::parse($this->startDate)->startOfDay(),
+            Carbon::parse($this->endDate)->endOfDay()
+        ]))
+        ->get()
+        ->flatMap(function ($vente) {
+            return $vente->details->map(function ($detail) {
+                return [
+                    'produit_id' => $detail->produit_id,
+                    'nom' => $detail->produit->nom,
+                    'reference' => $detail->produit->reference_interne,
+                    'quantite_vendue' => $detail->quantite,
+                    'quantite_restante' => $detail->produit->stock,
+                    'prix_unitaire' => $detail->prix_unitaire,
+                    'total' => $detail->quantite * $detail->prix_unitaire
+                ];
+            });
+        })
+        ->groupBy('produit_id')
+        ->map(function ($group) {
+            return [
+                'nom' => $group->first()['nom'],
+                'reference' => $group->first()['reference'],
+                'quantite_vendue' => $group->sum('quantite_vendue'),
+                'quantite_restante' => $group->first()['quantite_restante'],
+                'total_vendu' => $group->sum('total')
+            ];
+        })
+        ->values());
+}
+
+
 }

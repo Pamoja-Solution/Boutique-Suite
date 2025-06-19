@@ -36,6 +36,14 @@ class Produit extends Model
         return $this->belongsTo(SousRayon::class, 'sous_rayon_id');
     }
 
+
+    public static function generateReference()
+    {
+        // Exemple simple : Nom du produit + taille ou ID aléatoire
+        $prefix = 'PROD'; // ou 'COCA', etc., selon ton besoin
+        $random = strtoupper(\Str::random(4)); // ex: "ABCD"
+        return $prefix . $random;
+    }
     // Relation avec le rayon (via le sous-rayon)
     public function rayon()
     {

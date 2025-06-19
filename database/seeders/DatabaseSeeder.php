@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(2)->create();
+        User::factory(122)->create();
 
         /*User::factory()->create([
             'name' => 'Test User',
@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
 
 */
 
-//Client::factory(130)->create();
+Client::factory(130)->create();
         $this->call([
 
            //FournisseurSeeder::class,
