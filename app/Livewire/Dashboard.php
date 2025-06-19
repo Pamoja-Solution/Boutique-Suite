@@ -165,14 +165,32 @@ class Dashboard extends Component
     }
     
     private function getFinancialStats($dateRange)
-    {
-        $totalRevenue = Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->sum('total');
-        $totalCost = Achat::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])->sum('total');
-        
-        return [
-            'totalRevenue' => $totalRevenue,
-            'totalCost' => $totalCost,
-            'profit' => $totalRevenue - $totalCost
-        ];
-    }
+{
+    // Détail du bénéfice par produit
+    $productsProfit = DB::table('details_vente')
+        ->join('ventes', 'details_vente.vente_id', '=', 'ventes.id')
+        ->join('produits', 'details_vente.produit_id', '=', 'produits.id')
+        ->whereBetween('ventes.created_at', [$dateRange['start'], $dateRange['end']])
+        ->select(
+            'produits.nom',
+            DB::raw('SUM(details_vente.quantite) as total_quantity'),
+            DB::raw('SUM(details_vente.quantite * details_vente.prix_unitaire) as product_revenue'),
+            DB::raw('SUM(details_vente.quantite * produits.prix_achat) as product_cost'),
+            DB::raw('SUM(details_vente.quantite * (details_vente.prix_unitaire - produits.prix_achat)) as product_profit')
+        )
+        ->groupBy('produits.nom')
+        ->get();
+//dd( $productsProfit);
+    $totalRevenue = $productsProfit->sum('product_revenue');
+    $totalCost = $productsProfit->sum('product_cost');
+    $totalProfit = $productsProfit->sum('product_profit');
+
+    return [
+        'totalRevenue' => $totalRevenue,
+        'totalCost' => $totalCost,
+        'profit' => $totalProfit,
+        'margin' => $totalRevenue > 0 ? ($totalProfit / $totalRevenue) * 100 : 0,
+        'productsProfit' => $productsProfit // Optionnel: pour afficher le détail par produit
+    ];
+}
 }

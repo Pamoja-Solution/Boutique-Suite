@@ -74,7 +74,7 @@ Route::middleware(['role:vendeur,gerant,superviseur'
         Route::get('/clients',  GestionClients::class)->name('clients.index');
        // Route::get('/ventes', VenteManager::class)->name('ventes.index');
     });
-    Route::prefix('/users')->middleware('role:gerant')->group(function () {
+    Route::prefix('/users')->middleware('role:gerant,superviseur')->group(function () {
         Route::get('/users', UserManager::class)->name('users.index');
         Route::get('/achats', GestionStockSimple::class)->name('achats.index');
         Route::get('/vente', GestionVente::class)->name('vente.produits');
@@ -96,7 +96,7 @@ Route::middleware(['role:vendeur,gerant,superviseur'
     
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     
-    Route::middleware(['role:vendeur,gerant', 'verified'])->group(function () {
+    Route::middleware(['role:vendeur,gerant,superviseur', 'verified'])->group(function () {
         // ... autres routes
         
         Route::get('/vendeur/produits', GestionVente::class)->name('vendeur.produits');
