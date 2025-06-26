@@ -20,6 +20,6 @@
             <label for="remember">Se souvenir de moi</label>
         </div>
 
-        <button type="submit">Se connecterddddddddddddddddd</button>
+        <button type="submit">Se connecter</button>
     </form>
 </div>

@@ -61,10 +61,7 @@ Route::middleware(['role:vendeur,gerant,superviseur'
             return view ('dashboard.index');
         })->name('dashboard');
         
-        // Routes protégées par le middleware de rôle
-        Route::middleware('role:gerant')->group(function () {
-            Route::get('/rayons', RayonManager::class)->name('rayons.index');
-        });
+        
         
         // Routes accessibles à tous les utilisateurs authentifiés
         Route::get('/produits', function(){
@@ -73,6 +70,10 @@ Route::middleware(['role:vendeur,gerant,superviseur'
         Route::get('/fournisseurs', GestionFournisseurs::class)->name('fournisseurs.index');
         Route::get('/clients',  GestionClients::class)->name('clients.index');
        // Route::get('/ventes', VenteManager::class)->name('ventes.index');
+    });
+    // Routes protégées par le middleware de rôle
+    Route::middleware('role:gerant,superviseur')->group(function () {
+        Route::get('/rayons', RayonManager::class)->name('rayons.index');
     });
     Route::prefix('/users')->middleware('role:gerant,superviseur')->group(function () {
         Route::get('/users', UserManager::class)->name('users.index');
@@ -202,4 +203,6 @@ Route::post('/scan-barcode', [BarcodeController::class, 'processScan'])->name('s
     //Route::get('/gestion-codes-barres', GestionCodesBarres::class)->name('gestion.codes-barres');
     // routes/web.php
 Route::get('/produits/codes-barres', \App\Livewire\ProduitsCodeBarres::class)->name('gestion.codes-barres');
+
+Route::get('/modifications', \App\Livewire\Modifications::class)->name('modifications');
 require __DIR__.'/auth.php';

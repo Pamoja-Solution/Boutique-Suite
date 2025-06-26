@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->decimal('total');
             $table->string('matricule')->unique(); 
-
             $table->timestamps();
         });
     }

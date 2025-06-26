@@ -37,9 +37,11 @@
                 
                 
                 
-                <x-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')" wire:navigate >
-                    <i class="fas fa-sitemap mr-2"></i>
-                    {{ __('Rayons') }}
+                
+
+                <x-nav-link href="{{ route('modifications') }}" :active="request()->routeIs('modifications')" wire:navigate >
+                    <i class="fa-solid fa-pen-to-square mr-3"></i>
+                    {{ __('Modifications') }}<div class="badge badge-sm badge-secondary ml-1">nw</div>
                 </x-nav-link>
 
                 <!-- Dropdown Produits -->
@@ -58,7 +60,12 @@
                                 Produits
                             </a>
                         </li>
-
+                        <li>
+                            <a href="{{ route('rayons.index') }}" class="{{ request()->routeIs('rayons.index') ? 'active' : '' }}" wire:navigate >
+                                <i class="fas fa-sitemap mr-2"></i>
+                                {{ __('Rayons') }}
+                            </a>
+                        </li>
                         <li>
                             <a href="{{ route('gestion.codes-barres') }}" class="{{ request()->routeIs('gestion.codes-barres') ? 'active' : '' }}" wire:navigate >
                                 <i class="fa-solid fa-barcode"></i>
@@ -163,9 +170,11 @@
 
             
 
-            <x-responsive-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')" wire:navigate >
-                <i class="fas fa-sitemap mr-3"></i>
-                {{ __('Rayons') }}
+           
+
+            <x-responsive-nav-link href="{{ route('modifications') }}" :active="request()->routeIs('modifications')" wire:navigate >
+                <i class="fa-solid fa-pen-to-square mr-3"></i>
+                {{ __('Modifications') }}<div class="badge badge-sm badge-secondary ml-1">nw</div>
             </x-responsive-nav-link>
 
             <!-- Accordéon Produits -->
@@ -184,7 +193,10 @@
                         <i class="fa-solid fa-barcode"></i>
                             Code-Barre
                     </x-responsive-nav-link>
-                    
+                    <x-responsive-nav-link href="{{ route('rayons.index') }}" :active="request()->routeIs('rayons.index')" wire:navigate >
+                        <i class="fas fa-sitemap mr-3"></i>
+                        {{ __('Rayons') }}
+                    </x-responsive-nav-link>
                     <x-responsive-nav-link href="{{ route('fournisseurs.index') }}" :active="request()->routeIs('fournisseurs.index')" wire:navigate >
                         <i class="fas fa-truck mr-3"></i>
                         {{ __('Fournisseurs') }}
