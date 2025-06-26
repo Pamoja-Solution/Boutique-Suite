@@ -15,7 +15,7 @@ use Livewire\Attributes\Layout;
 #[Layout('layouts.app')]
 class Dashboard extends Component
 {
-    public $period = 'month';
+    public $period = 'day';
     
     public function render()
     {
@@ -95,37 +95,54 @@ class Dashboard extends Component
     }
     
     private function getDateRange()
-    {
-        $now = Carbon::now();
-        
-        switch ($this->period) {
-            case 'week':
-                return [
-                    'start' => $now->copy()->startOfWeek(),
-                    'end' => $now->copy()->endOfWeek()
-                ];
-            case 'month':
-                return [
-                    'start' => $now->copy()->startOfMonth(),
-                    'end' => $now->copy()->endOfMonth()
-                ];
-            case 'year':
-                return [
-                    'start' => $now->copy()->startOfYear(),
-                    'end' => $now->copy()->endOfYear()
-                ];
-            default:
-                return [
-                    'start' => $now->copy()->startOfMonth(),
-                    'end' => $now->copy()->endOfMonth()
-                ];
-        }
+{
+    $now = Carbon::now();
+    
+    switch ($this->period) {
+        case 'day':
+            return [
+                'start' => $now->copy()->startOfDay(),
+                'end' => $now->copy()->endOfDay()
+            ];
+        case 'week':
+            return [
+                'start' => $now->copy()->startOfWeek(),
+                'end' => $now->copy()->endOfWeek()
+            ];
+        case 'month':
+            return [
+                'start' => $now->copy()->startOfMonth(),
+                'end' => $now->copy()->endOfMonth()
+            ];
+        default: // Par défaut, on montre la journée
+            return [
+                'start' => $now->copy()->startOfDay(),
+                'end' => $now->copy()->endOfDay()
+            ];
     }
+}
     
     private function getSalesData($dateRange)
     {
+        if ($this->period === 'day') {
+            // Affichage par heure pour la vue journalière
+            if (config('database.default') === 'sqlite') {
+                return Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                    ->selectRaw("strftime('%H:00', created_at) as hour, SUM(total) as amount")
+                    ->groupBy('hour')
+                    ->orderBy('hour')
+                    ->get();
+            } else {
+                return Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                    ->selectRaw("DATE_FORMAT(created_at, '%H:00') as hour, SUM(total) as amount")
+                    ->groupBy('hour')
+                    ->orderBy('hour')
+                    ->get();
+            }
+        }
+        
+        // Le reste du code existant pour les autres périodes...
         if (config('database.default') === 'sqlite') {
-            // Version pour SQLite
             if ($this->period === 'year') {
                 return Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                     ->selectRaw("strftime('%Y-%m', created_at) as date, SUM(total) as amount")
@@ -140,7 +157,6 @@ class Dashboard extends Component
                     ->get();
             }
         } else {
-            // Version pour MySQL/MariaDB
             $groupByFormat = $this->period === 'year' ? '%Y-%m' : '%Y-%m-%d';
             
             return Vente::whereBetween('created_at', [$dateRange['start'], $dateRange['end']])

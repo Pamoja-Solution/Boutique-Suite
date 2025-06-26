@@ -7,6 +7,10 @@
                 @livewire('taux-change-scroller')
             </div>
             <div class="join">
+                <button wire:click="changePeriod('day')" 
+                    class="join-item btn {{ $period === 'day' ? 'btn-primary' : 'btn-ghost' }}">
+                    Aujourd'hui
+                </button>
                 <button wire:click="changePeriod('week')" 
                     class="join-item btn {{ $period === 'week' ? 'btn-primary' : 'btn-ghost' }}">
                     Cette semaine
@@ -14,10 +18,6 @@
                 <button wire:click="changePeriod('month')" 
                     class="join-item btn {{ $period === 'month' ? 'btn-primary' : 'btn-ghost' }}">
                     Ce mois
-                </button>
-                <button wire:click="changePeriod('year')" 
-                    class="join-item btn {{ $period === 'year' ? 'btn-primary' : 'btn-ghost' }}">
-                    Cette année
                 </button>
             </div>
         </div>
